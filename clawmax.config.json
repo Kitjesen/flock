@@ -1,0 +1,7 @@
+{
+  "gitBashPath": "D:\\Program Files\\Git\\bin\\bash.exe",
+  "nodePath":    "C:\\Program Files\\nodejs\\node.exe",
+  "model":       "claude-sonnet-4-6",
+  "proxyPort":   3456,
+  "gatewayPort": 18789
+}

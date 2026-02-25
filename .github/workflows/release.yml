@@ -1,0 +1,95 @@
+name: Release
+
+# 推送 v* 标签时自动打包并发布 GitHub Release
+# 例：git tag v1.0.1 && git push origin v1.0.1
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # 允许创建 Release 并上传附件
+
+jobs:
+  release:
+    runs-on: windows-latest    # 需要 Windows 环境（PowerShell + Compress-Archive）
+
+    steps:
+      # ── 1. 检出代码 ──────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. 解析版本号（去掉 refs/tags/ 前缀）───────────────────
+      - name: Parse version
+        id: ver
+        shell: bash
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      # ── 3. 打包 flock-setup.zip ─────────────────────────────────
+      - name: Build release zip
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $zipPath = powershell -NoProfile -ExecutionPolicy Bypass `
+            -File "$env:GITHUB_WORKSPACE\release.ps1" `
+            -OutDir "$env:GITHUB_WORKSPACE\dist" `
+            -Version $version
+          # 传递 zip 路径给后续步骤
+          echo "zip_path=$zipPath" >> $env:GITHUB_OUTPUT
+        id: build
+
+      # ── 4. 生成 Release 说明 ─────────────────────────────────────
+      - name: Generate release notes
+        id: notes
+        shell: bash
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          cat >> "$GITHUB_OUTPUT" << 'EOF'
+          notes<<NOTES_EOF
+          ## FLOCK $VERSION — 一键安装包
+
+          ### 安装方式 1：PowerShell 一行命令（推荐）
+          ```powershell
+          irm https://raw.githubusercontent.com/${{ github.repository }}/main/bootstrap.ps1 | iex
+          ```
+
+          ### 安装方式 2：下载 zip 双击安装
+          1. 下载下方 `flock-setup-$VERSION.zip`
+          2. 解压到任意目录
+          3. 双击 `bootstrap.cmd`
+
+          ### 安装后
+          - 首次登录：`claude auth login`
+          - 日常启动：桌面快捷方式「启动 FLOCK」
+          - 服务状态：`pm2 status`
+          NOTES_EOF
+          EOF
+
+      # ── 5. 创建 GitHub Release 并上传附件 ───────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.version }}
+          name: FLOCK ${{ steps.ver.outputs.version }}
+          body: |
+            ## FLOCK ${{ steps.ver.outputs.version }} — 一键安装包
+
+            ### 安装方式 1：PowerShell 一行命令（推荐）
+            ```powershell
+            irm https://raw.githubusercontent.com/${{ github.repository }}/main/bootstrap.ps1 | iex
+            ```
+
+            ### 安装方式 2：下载 zip 双击安装
+            1. 下载下方 `flock-setup-${{ steps.ver.outputs.version }}.zip`
+            2. 解压到任意目录
+            3. 双击 `bootstrap.cmd`
+
+            ### 安装后
+            - 首次登录：`claude auth login`
+            - 日常启动：桌面快捷方式「启动 FLOCK」
+            - 服务状态：`pm2 status`
+          draft: false
+          prerelease: ${{ contains(steps.ver.outputs.version, '-') }}
+          files: |
+            dist/flock-setup-${{ steps.ver.outputs.version }}.zip
