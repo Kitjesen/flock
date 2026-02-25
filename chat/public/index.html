@@ -28,13 +28,13 @@
 
     /* ── Sidebar ─────────────────────────────────────────────── */
     .sidebar {
-      width: 232px; min-width: 232px;
+      width: 240px; min-width: 240px;
       background: var(--bg2); border-right: 1px solid var(--border);
       display: flex; flex-direction: column; overflow: hidden;
       transition: width 0.22s ease, min-width 0.22s ease, border 0.22s ease;
     }
     .sidebar.collapsed { width: 0; min-width: 0; border-right: none; }
-    .sidebar-inner { width: 232px; display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+    .sidebar-inner { width: 240px; display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
     .sidebar-header {
       padding: 13px 14px 11px;
@@ -57,11 +57,14 @@
     }
     .new-chat-btn:hover { background: var(--accent2); }
 
+    /* section labels */
     .section-label {
       padding: 10px 14px 4px;
       font-size: 10px; font-weight: 700; text-transform: uppercase;
       letter-spacing: 1px; color: var(--text2); flex-shrink: 0;
     }
+
+    /* agents */
     .agent-list { display: flex; flex-direction: column; gap: 1px; padding: 0 8px; flex-shrink: 0; }
     .agent-item {
       display: flex; align-items: center; gap: 8px;
@@ -83,15 +86,80 @@
     }
     .add-agent-btn:hover { background: var(--bg3); color: var(--text); }
 
+    /* ── Skills section ─────────────────────────────────────── */
+    .skills-section { flex-shrink: 0; border-top: 1px solid var(--border); }
+    .skills-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px 6px; cursor: pointer; user-select: none;
+    }
+    .skills-header:hover .section-label-inline { color: var(--text); }
+    .section-label-inline {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text2); transition: color 0.12s;
+    }
+    .skills-header-right { display: flex; align-items: center; gap: 4px; }
+    .skill-count-badge {
+      font-size: 9px; background: var(--bg3); color: var(--text2);
+      padding: 1px 5px; border-radius: 3px; font-family: var(--mono);
+    }
+    .skills-chevron { transition: transform 0.2s; color: var(--text2); }
+    .skills-chevron.open { transform: rotate(180deg); }
+    .skills-body { display: none; padding-bottom: 4px; }
+    .skills-body.open { display: block; }
+    .skill-list { display: flex; flex-direction: column; gap: 1px; padding: 0 8px; }
+    .skill-item {
+      display: flex; align-items: center; gap: 7px;
+      padding: 5px 8px; border-radius: 6px; cursor: pointer; transition: background 0.12s;
+    }
+    .skill-item:hover { background: var(--bg3); }
+    .skill-emoji { font-size: 13px; flex-shrink: 0; width: 18px; text-align: center; }
+    .skill-slash { font-size: 10px; color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
+    .skill-name  { font-size: 12px; font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .skill-desc  { font-size: 10px; color: var(--text2); flex-shrink: 0; max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .skill-edit  { font-size: 11px; color: var(--text2); opacity: 0; padding: 2px 5px; cursor: pointer; border-radius: 3px; flex-shrink: 0; border: none; background: transparent; }
+    .skill-item:hover .skill-edit { opacity: 1; }
+    .skill-edit:hover { background: var(--border); color: var(--text); }
+    .add-skill-btn {
+      display: flex; align-items: center; gap: 6px;
+      margin: 2px 8px; padding: 5px 8px; border-radius: 6px;
+      color: var(--text2); font-size: 12px; cursor: pointer; border: none;
+      background: transparent; transition: background 0.12s; width: calc(100% - 16px);
+    }
+    .add-skill-btn:hover { background: var(--bg3); color: var(--text); }
+
+    /* ── Slash command picker ────────────────────────────────── */
+    .slash-picker {
+      position: absolute; bottom: 100%; left: 0; right: 0;
+      background: var(--bg2); border: 1px solid var(--border); border-bottom: none;
+      border-radius: 10px 10px 0 0; overflow: hidden;
+      box-shadow: 0 -8px 28px rgba(0,0,0,0.45);
+      display: none; max-height: 300px; overflow-y: auto; z-index: 40;
+    }
+    .slash-picker.open { display: block; }
+    .slash-picker-header {
+      padding: 6px 14px; font-size: 10px; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--border); background: var(--bg3);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .slash-picker-hint { font-size: 10px; color: var(--text2); font-family: var(--mono); }
+    .slash-picker-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; cursor: pointer; transition: background 0.1s;
+    }
+    .slash-picker-item:hover, .slash-picker-item.active { background: var(--bg3); }
+    .slash-picker-emoji { font-size: 16px; flex-shrink: 0; width: 24px; text-align: center; }
+    .slash-picker-cmd   { font-size: 13px; font-weight: 600; color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
+    .slash-picker-desc  { font-size: 12px; color: var(--text2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
     /* system prompt */
-    .sysprompt-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); flex-shrink: 0; margin: 6px 0; }
+    .sysprompt-wrap { border-top: 1px solid var(--border); flex-shrink: 0; }
     .sysprompt-toggle {
       display: flex; align-items: center; justify-content: space-between;
       padding: 7px 14px; cursor: pointer; user-select: none;
-      font-size: 10px; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
     }
-    .sysprompt-toggle:hover { color: var(--text); }
-    .sysprompt-toggle svg { transition: transform 0.2s; flex-shrink: 0; }
+    .sysprompt-toggle:hover .section-label-inline { color: var(--text); }
+    .sysprompt-toggle svg { transition: transform 0.2s; flex-shrink: 0; color: var(--text2); }
     .sysprompt-toggle.open svg { transform: rotate(180deg); }
     .sysprompt-body { padding: 0 8px 8px; display: none; }
     .sysprompt-body.open { display: block; }
@@ -115,7 +183,7 @@
     .history-search input::placeholder { color: var(--text2); }
 
     /* history */
-    .history-wrap { flex: 1; overflow-y: auto; padding-bottom: 8px; }
+    .history-wrap { flex: 1; overflow-y: auto; padding-bottom: 8px; min-height: 0; }
     .history-list { display: flex; flex-direction: column; gap: 1px; padding: 0 8px; }
     .history-item {
       display: flex; align-items: center; gap: 4px;
@@ -127,7 +195,6 @@
     .history-del { font-size: 14px; color: var(--text2); opacity: 0; padding: 0 2px; flex-shrink: 0; line-height: 1; }
     .history-item:hover .history-del { opacity: 1; }
     .history-del:hover { color: var(--danger); }
-    /* inline rename */
     .rename-input {
       flex: 1; min-width: 0; background: transparent;
       border: none; border-bottom: 1px solid var(--accent);
@@ -138,8 +205,7 @@
     /* ── Main ────────────────────────────────────────────────── */
     main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
     .chat-header {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; gap: 8px;
       background: var(--bg); flex-shrink: 0;
     }
@@ -169,8 +235,6 @@
 
     /* messages */
     #messages { flex: 1; overflow-y: auto; padding: 10px 0; display: flex; flex-direction: column; gap: 0; }
-
-    /* Message fade-in animation */
     @keyframes fadeSlide { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
     .message {
       display: flex; gap: 10px; padding: 8px 18px; position: relative;
@@ -184,7 +248,6 @@
     }
     .message.user .message-avatar { background: var(--accent2); font-size: 11px; font-weight: 700; }
     .message.assistant .message-avatar { background: var(--bg3); }
-
     .message-body { flex: 1; min-width: 0; }
     .msg-images { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
     .msg-img { max-width: 240px; max-height: 200px; border-radius: 6px; border: 1px solid var(--border); object-fit: contain; cursor: zoom-in; }
@@ -206,8 +269,6 @@
       padding: 1px 5px; border-radius: 4px;
       font-family: var(--mono); font-size: 12.5px; color: #ff7b72;
     }
-
-    /* message hover actions */
     .msg-actions {
       position: absolute; right: 14px; top: 7px;
       display: flex; align-items: center; gap: 3px;
@@ -222,7 +283,6 @@
     }
     .msg-act:hover { color: var(--text); background: var(--bg3); }
     .msg-act.ok { color: var(--success); }
-    .msg-act.danger:hover { color: var(--danger); border-color: var(--danger); }
 
     /* code blocks */
     .code-block-wrap { position: relative; margin: 10px 0; }
@@ -243,17 +303,14 @@
     .code-block-wrap pre code { border-radius: 0 0 6px 6px; font-size: 12.5px !important; }
     .hljs { padding: 12px 14px !important; }
 
-    /* streaming cursor */
+    /* streaming */
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .streaming::after { content:'▋'; animation:blink 0.8s infinite; font-size:13px; color:var(--accent); margin-left:1px; }
 
-    /* thinking dots (before first token) */
+    /* thinking dots */
     @keyframes thinkDot { 0%,100%{opacity:0.25;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
     .thinking-dots { display: inline-flex; align-items: center; gap: 5px; padding: 4px 2px; }
-    .thinking-dots span {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
-      animation: thinkDot 1.1s ease infinite;
-    }
+    .thinking-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: thinkDot 1.1s ease infinite; }
     .thinking-dots span:nth-child(2) { animation-delay: 0.18s; }
     .thinking-dots span:nth-child(3) { animation-delay: 0.36s; }
 
@@ -269,31 +326,20 @@
     .shortcut-row { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 8px; justify-content: center; }
     .kbd { background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; font-family: var(--mono); font-size: 10px; color: var(--text); }
 
-    /* image previews in input */
-    .image-previews {
-      display: none; flex-wrap: wrap; gap: 6px;
-      padding: 8px 14px 0; border-top: 1px solid var(--border);
-    }
+    /* image previews */
+    .image-previews { display: none; flex-wrap: wrap; gap: 6px; padding: 8px 14px 0; border-top: 1px solid var(--border); }
     .image-previews.has-images { display: flex; }
-    .img-thumb {
-      position: relative; width: 60px; height: 60px;
-      border-radius: 6px; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;
-    }
+    .img-thumb { position: relative; width: 60px; height: 60px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; }
     .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .img-remove {
-      position: absolute; top: 2px; right: 2px;
-      width: 16px; height: 16px; background: rgba(0,0,0,0.75);
-      border: none; color: #fff; border-radius: 50%; cursor: pointer;
-      font-size: 11px; display: flex; align-items: center; justify-content: center;
-      line-height: 1;
+      position: absolute; top: 2px; right: 2px; width: 16px; height: 16px;
+      background: rgba(0,0,0,0.75); border: none; color: #fff; border-radius: 50%;
+      cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; line-height: 1;
     }
     .img-remove:hover { background: var(--danger); }
 
     /* input area */
-    .input-area {
-      border-top: 1px solid var(--border); background: var(--bg);
-      flex-shrink: 0; transition: border-color 0.15s;
-    }
+    .input-area { border-top: 1px solid var(--border); background: var(--bg); flex-shrink: 0; position: relative; transition: border-color 0.15s; }
     .input-area.drag-over { border-top-color: var(--accent); background: rgba(0,188,212,0.04); }
     .input-row { display: flex; align-items: flex-end; gap: 6px; padding: 10px 14px 0; }
     .attach-btn {
@@ -327,48 +373,36 @@
       align-items: center; gap: 5px; transition: background 0.12s;
     }
     .stop-btn:hover { background: rgba(248,81,73,0.12); }
-    .input-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 5px 14px 10px;
-    }
+    .input-footer { display: flex; align-items: center; justify-content: space-between; padding: 5px 14px 10px; }
     .input-footer-left { display: flex; align-items: center; gap: 10px; }
-    .char-count  { font-size: 11px; color: var(--text2); }
-    .token-est   { font-size: 11px; color: var(--text2); opacity: 0.7; }
-    .input-hint  { font-size: 11px; color: var(--text2); }
+    .char-count { font-size: 11px; color: var(--text2); }
+    .token-est  { font-size: 11px; color: var(--text2); opacity: 0.7; }
+    .input-hint { font-size: 11px; color: var(--text2); }
 
-    /* model quick-pick dropdown */
+    /* model picker */
     .model-picker {
       position: absolute; top: calc(100% + 4px); left: 0;
       background: var(--bg2); border: 1px solid var(--border);
       border-radius: 8px; padding: 4px; z-index: 50; min-width: 220px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
-    .model-picker-item {
-      padding: 7px 10px; border-radius: 5px; cursor: pointer;
-      font-size: 12px; font-family: var(--mono); color: var(--text2); transition: background 0.1s;
-    }
+    .model-picker-item { padding: 7px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-family: var(--mono); color: var(--text2); transition: background 0.1s; }
     .model-picker-item:hover { background: var(--bg3); color: var(--text); }
     .model-picker-item.active { color: var(--accent); }
     .model-picker-wrap { position: relative; display: inline-block; }
 
-    /* image lightbox */
-    .lightbox {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      display: none; align-items: center; justify-content: center; z-index: 200; cursor: zoom-out;
-    }
+    /* lightbox */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 200; cursor: zoom-out; }
     .lightbox.open { display: flex; }
     .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
 
     /* ── Toast ───────────────────────────────────────────────── */
-    #toast-wrap {
-      position: fixed; bottom: 24px; right: 24px; z-index: 999;
-      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
-    }
+    #toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
     @keyframes toastIn  { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:translateX(0); } }
-    @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(16px); } }
+    @keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateX(16px); } }
     .toast {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 8px; padding: 9px 16px; font-size: 13px; color: var(--text);
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+      padding: 9px 16px; font-size: 13px; color: var(--text);
       box-shadow: 0 4px 18px rgba(0,0,0,0.45); animation: toastIn 0.2s ease both;
       pointer-events: all; min-width: 180px; max-width: 280px;
     }
@@ -377,21 +411,10 @@
     .toast.err  { border-left: 3px solid var(--danger); }
 
     /* ── Modal ───────────────────────────────────────────────── */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
-      display: none; align-items: center; justify-content: center; z-index: 100;
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; align-items: center; justify-content: center; z-index: 100; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 10px; width: 460px; max-width: 96vw; max-height: 80vh;
-      display: flex; flex-direction: column; overflow: hidden;
-    }
-    .modal-header {
-      padding: 14px 16px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 14px; font-weight: 600; flex-shrink: 0;
-    }
+    .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; width: 480px; max-width: 96vw; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; }
+    .modal-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; flex-shrink: 0; }
     .modal-close { background: transparent; border: none; cursor: pointer; color: var(--text2); font-size: 20px; padding: 0 4px; line-height: 1; }
     .modal-close:hover { color: var(--text); }
     .modal-body { padding: 14px 16px; overflow-y: auto; flex: 1; }
@@ -402,22 +425,25 @@
       width: 100%; background: var(--bg3); border: 1px solid var(--border);
       border-radius: 6px; color: var(--text); font-size: 13px; padding: 7px 10px; font-family: var(--font);
     }
-    .form-row textarea { resize: vertical; height: 80px; font-size: 12px; font-family: var(--mono); line-height: 1.5; }
+    .form-row textarea { resize: vertical; font-family: var(--mono); font-size: 12px; line-height: 1.5; }
     .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: var(--accent); }
     .form-row select option { background: var(--bg3); }
     .form-two { display: grid; grid-template-columns: 64px 1fr; gap: 10px; }
-    .agent-card {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px; border: 1px solid var(--border);
+    .form-hint { font-size: 11px; color: var(--text2); margin-top: 4px; }
+    /* cards */
+    .card {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px; border: 1px solid var(--border);
       border-radius: 8px; margin-bottom: 8px; transition: border-color 0.12s;
     }
-    .agent-card:hover { border-color: var(--text2); }
-    .agent-card-emoji { font-size: 22px; flex-shrink: 0; }
-    .agent-card-info { flex: 1; min-width: 0; }
-    .agent-card-name  { font-size: 13px; font-weight: 600; }
-    .agent-card-model { font-size: 11px; color: var(--text2); font-family: var(--mono); }
-    .agent-card-desc  { font-size: 11px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .agent-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .card:hover { border-color: var(--text2); }
+    .card-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name  { font-size: 13px; font-weight: 600; }
+    .card-sub   { font-size: 11px; color: var(--accent); font-family: var(--mono); }
+    .card-desc  { font-size: 11px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+    .card-prompt { font-size: 11px; color: var(--text2); font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; background: var(--bg3); padding: 2px 6px; border-radius: 4px; }
+    .card-actions { display: flex; gap: 4px; flex-shrink: 0; }
     .btn { padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: opacity 0.15s; }
     .btn:hover { opacity: 0.85; }
     .btn-primary   { background: var(--accent);   color: #000; }
@@ -444,26 +470,48 @@
       <span class="status-text" id="status-text">检测中...</span>
     </div>
   </div>
+
   <button class="new-chat-btn" id="new-chat-btn">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     新对话
   </button>
+
   <div class="section-label">助手</div>
   <div class="agent-list" id="agent-list"></div>
   <button class="add-agent-btn" id="add-agent-btn">
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     添加助手
   </button>
+
+  <!-- Skills section -->
+  <div class="skills-section" id="skills-section">
+    <div class="skills-header" id="skills-header">
+      <span class="section-label-inline">技能</span>
+      <div class="skills-header-right">
+        <span class="skill-count-badge" id="skill-count">0</span>
+        <svg class="skills-chevron" id="skills-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="skills-body" id="skills-body">
+      <div class="skill-list" id="skill-list"></div>
+      <button class="add-skill-btn" id="add-skill-btn">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        添加技能
+      </button>
+    </div>
+  </div>
+
   <div class="sysprompt-wrap">
     <div class="sysprompt-toggle" id="sysprompt-toggle">
-      <span>系统提示词</span>
+      <span class="section-label-inline">系统提示词</span>
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div class="sysprompt-body" id="sysprompt-body">
       <textarea id="sysprompt-input" placeholder="角色设定和规则...（留空为默认行为）"></textarea>
     </div>
   </div>
-  <div class="section-label">历史</div>
+
+  <div class="section-label" style="margin-top:2px">历史</div>
   <div class="history-search">
     <input id="history-search" placeholder="搜索历史..." autocomplete="off">
   </div>
@@ -500,12 +548,14 @@
   <div id="messages"></div>
 
   <div class="input-area" id="input-area">
+    <!-- Slash command picker (above input) -->
+    <div class="slash-picker" id="slash-picker"></div>
     <div class="image-previews" id="image-previews"></div>
     <div class="input-row">
       <button class="attach-btn" id="attach-btn" title="上传图片 (或直接粘贴)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
       </button>
-      <textarea id="input" placeholder="输入消息...（Enter 发送，Shift+Enter 换行，Ctrl+V 粘贴图片）"></textarea>
+      <textarea id="input" placeholder="输入消息... 或用 / 调用技能"></textarea>
       <button class="send-btn" id="send-btn">发送</button>
       <button class="stop-btn" id="stop-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
@@ -517,7 +567,7 @@
         <span class="char-count" id="char-count"></span>
         <span class="token-est"  id="token-est"></span>
       </div>
-      <span class="input-hint">Enter · Shift+Enter 换行 · Ctrl+N 新对话 · Ctrl+K 搜索</span>
+      <span class="input-hint">Enter 发送 · / 技能 · Ctrl+N 新对话 · Ctrl+K 搜索</span>
     </div>
   </div>
 </main>
@@ -526,7 +576,7 @@
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <div class="modal-header">
-      <span id="modal-title">管理助手</span>
+      <span id="modal-title">管理</span>
       <button class="modal-close" id="modal-close">×</button>
     </div>
     <div class="modal-body"   id="modal-body"></div>
@@ -537,7 +587,7 @@
 <!-- ── Lightbox ──────────────────────────────────────────────────── -->
 <div class="lightbox" id="lightbox"><img id="lightbox-img" src="" alt=""></div>
 
-<!-- ── Toast container ──────────────────────────────────────────── -->
+<!-- ── Toast ─────────────────────────────────────────────────────── -->
 <div id="toast-wrap"></div>
 
 <!-- ── Hidden file input ─────────────────────────────────────────── -->
@@ -574,31 +624,44 @@ const DEFAULT_AGENTS = [
   { id:'dev',  name:'Dev',  emoji:'💻', model:'claude-sonnet-4-6', desc:'开发工程师' },
   { id:'qa',   name:'QA',   emoji:'🧪', model:'claude-sonnet-4-6', desc:'测试工程师' },
 ];
+const DEFAULT_SKILLS = [
+  { id:'translate', name:'translate', emoji:'🌐', desc:'翻译为中文/英文', prompt:'请将以下内容翻译为英文，保持原意和风格：\n\n{input}' },
+  { id:'summarize', name:'summarize', emoji:'📝', desc:'总结要点', prompt:'请总结以下内容的核心要点，用简洁的要点列表呈现：\n\n{input}' },
+  { id:'explain',   name:'explain',   emoji:'💡', desc:'深度解释', prompt:'请详细解释以下内容，包括背景、原理和实际应用：\n\n{input}' },
+  { id:'review',    name:'review',    emoji:'🔍', desc:'代码审查', prompt:'请对以下代码进行审查，从正确性、性能、可读性三个维度分析，并给出具体改进建议：\n\n```\n{input}\n```' },
+  { id:'polish',    name:'polish',    emoji:'✨', desc:'文字润色', prompt:'请润色以下文字，使其更加流畅自然，保持原意：\n\n{input}' },
+  { id:'debug',     name:'debug',     emoji:'🐛', desc:'调试分析', prompt:'请分析以下代码或错误，找出问题原因并提供修复方案：\n\n{input}' },
+  { id:'plan',      name:'plan',      emoji:'🗺️', desc:'拆解计划', prompt:'请将以下目标拆解为具体可执行的步骤计划：\n\n{input}' },
+];
 
 // ── State ────────────────────────────────────────────────────────
 let agents         = JSON.parse(localStorage.getItem('flock_agents') || 'null') || DEFAULT_AGENTS;
+let skills         = JSON.parse(localStorage.getItem('flock_skills') || 'null') || DEFAULT_SKILLS;
 let currentAgentId = localStorage.getItem('flock_agent') || 'main';
 let conversations  = JSON.parse(localStorage.getItem('flock_convs') || '{}');
 let currentConvId  = null;
 let isStreaming    = false;
 let abortCtrl     = null;
-let pendingImages  = [];   // { id, dataUrl, mimeType }
-let filterQuery    = '';   // history search
+let pendingImages  = [];
+let filterQuery    = '';
+let slashIdx      = 0;   // selected slash picker item
 
 // ── Helpers ──────────────────────────────────────────────────────
 const getAgent     = id => agents.find(a => a.id === id) || agents[0];
+const getSkill     = id => skills.find(s => s.id === id);
 const getConvs     = id => Object.values(conversations).filter(c => c.agentId === id).sort((a,b) => b.updatedAt - a.updatedAt);
 const saveConvs    = () => localStorage.setItem('flock_convs', JSON.stringify(conversations));
 const saveAgents   = () => localStorage.setItem('flock_agents', JSON.stringify(agents));
+const saveSkills   = () => localStorage.setItem('flock_skills', JSON.stringify(skills));
 const getSysPrompt = id => localStorage.getItem(`flock_sysprompt_${id}`) || '';
 const setSysPrompt = (id, v) => v ? localStorage.setItem(`flock_sysprompt_${id}`, v) : localStorage.removeItem(`flock_sysprompt_${id}`);
 const getSessionId = id => {
   const k = `flock_sid_${id}`;
   return localStorage.getItem(k) || (() => { const v = crypto.randomUUID(); localStorage.setItem(k, v); return v; })();
 };
-const scrollBottom  = () => { const m = document.getElementById('messages'); m.scrollTop = m.scrollHeight; };
-const escHtml       = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-const formatTime    = ts => ts ? new Date(ts).toLocaleTimeString('zh', {hour:'2-digit', minute:'2-digit'}) : '';
+const scrollBottom     = () => { const m = document.getElementById('messages'); m.scrollTop = m.scrollHeight; };
+const escHtml          = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+const formatTime       = ts => ts ? new Date(ts).toLocaleTimeString('zh', {hour:'2-digit', minute:'2-digit'}) : '';
 const sidebarCollapsed = () => localStorage.getItem('flock_sidebar') === '0';
 
 // ── Toast ─────────────────────────────────────────────────────────
@@ -614,38 +677,27 @@ function toast(msg, type = 'ok', duration = 2400) {
   }, duration);
 }
 
-// ── Markdown + syntax highlight ──────────────────────────────────
-
-// Safe streaming markdown: handles incomplete code fences
+// ── Markdown + highlight ─────────────────────────────────────────
 function safeStreamMd(text) {
   const fenceCount = (text.match(/```/g) || []).length;
   if (fenceCount % 2 !== 0) {
-    // Unclosed fence — render everything up to the last ``` as markdown,
-    // then show the rest as a raw partial code block
     const lastFence = text.lastIndexOf('```');
-    const safe = text.slice(0, lastFence);
-    const partial = text.slice(lastFence + 3); // content after the fence marker
-    const safeHtml = typeof marked !== 'undefined'
-      ? marked.parse(safe, { breaks:true, gfm:true })
-      : escHtml(safe);
-    return safeHtml + `<pre style="margin-top:8px;border-radius:6px;border:1px solid var(--border);padding:10px 14px;font-size:12.5px;overflow-x:auto;"><code>${escHtml(partial)}</code></pre>`;
+    const safe    = text.slice(0, lastFence);
+    const partial = text.slice(lastFence + 3);
+    const safeHtml = typeof marked !== 'undefined' ? marked.parse(safe, { breaks:true, gfm:true }) : escHtml(safe);
+    return safeHtml + `<pre style="margin-top:8px;border-radius:6px;border:1px solid var(--border);padding:10px 14px;font-size:12.5px;overflow-x:auto"><code>${escHtml(partial)}</code></pre>`;
   }
-  return typeof marked !== 'undefined'
-    ? marked.parse(text, { breaks:true, gfm:true })
-    : escHtml(text);
+  return typeof marked !== 'undefined' ? marked.parse(text, { breaks:true, gfm:true }) : escHtml(text);
 }
 
 function wrapCodeBlocks(container) {
   container.querySelectorAll('pre').forEach(pre => {
     if (pre.parentElement?.classList.contains('code-block-wrap')) return;
-    const code = pre.querySelector('code');
-    if (!code) return;
+    const code = pre.querySelector('code'); if (!code) return;
     if (typeof hljs !== 'undefined' && !code.dataset.highlighted) hljs.highlightElement(code);
     const lang = (code.className.match(/language-(\w+)/) || [])[1] || 'code';
-    const wrap = document.createElement('div');
-    wrap.className = 'code-block-wrap';
-    const hdr = document.createElement('div');
-    hdr.className = 'code-block-header';
+    const wrap = document.createElement('div'); wrap.className = 'code-block-wrap';
+    const hdr  = document.createElement('div'); hdr.className  = 'code-block-header';
     hdr.innerHTML = `<span class="code-lang">${lang}</span><button class="code-copy-btn">复制</button>`;
     hdr.querySelector('.code-copy-btn').addEventListener('click', e => {
       const btn = e.currentTarget;
@@ -654,15 +706,12 @@ function wrapCodeBlocks(container) {
         setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('ok'); }, 2000);
       }).catch(() => { btn.textContent = '失败'; setTimeout(() => { btn.textContent = '复制'; }, 1500); });
     });
-    pre.parentNode.insertBefore(wrap, pre);
-    wrap.appendChild(hdr); wrap.appendChild(pre);
+    pre.parentNode.insertBefore(wrap, pre); wrap.appendChild(hdr); wrap.appendChild(pre);
   });
 }
 
 function renderMd(el, text) {
-  el.innerHTML = typeof marked !== 'undefined'
-    ? marked.parse(text, { breaks: true, gfm: true })
-    : escHtml(text);
+  el.innerHTML = typeof marked !== 'undefined' ? marked.parse(text, { breaks:true, gfm:true }) : escHtml(text);
   wrapCodeBlocks(el);
 }
 
@@ -675,39 +724,33 @@ function newConv(agentId) {
 function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; }
 
 // ── Sidebar collapse ─────────────────────────────────────────────
-function initSidebar() {
-  if (sidebarCollapsed()) document.getElementById('sidebar').classList.add('collapsed');
-}
-document.getElementById('sidebar-toggle').addEventListener('click', toggleSidebar);
 function toggleSidebar() {
-  const sb  = document.getElementById('sidebar');
+  const sb = document.getElementById('sidebar');
   const was = sb.classList.toggle('collapsed');
   localStorage.setItem('flock_sidebar', was ? '0' : '1');
 }
+function initSidebar() { if (sidebarCollapsed()) document.getElementById('sidebar').classList.add('collapsed'); }
+document.getElementById('sidebar-toggle').addEventListener('click', toggleSidebar);
 
 // ── Model quick-pick ─────────────────────────────────────────────
-const pickerWrap  = document.getElementById('model-picker-wrap');
-const pickerEl    = document.getElementById('model-picker');
+const pickerWrap = document.getElementById('model-picker-wrap');
+const pickerEl   = document.getElementById('model-picker');
 
 function renderModelPicker() {
   const a = getAgent(currentAgentId);
   pickerEl.innerHTML = MODELS.map(m =>
-    `<div class="model-picker-item ${m === a.model ? 'active' : ''}" data-model="${m}">${m}</div>`
-  ).join('');
+    `<div class="model-picker-item ${m === a.model ? 'active' : ''}" data-model="${m}">${m}</div>`).join('');
 }
 document.getElementById('model-badge').addEventListener('click', e => {
-  e.stopPropagation();
-  renderModelPicker();
+  e.stopPropagation(); renderModelPicker();
   pickerEl.style.display = pickerEl.style.display === 'none' ? 'block' : 'none';
 });
 pickerEl.addEventListener('click', e => {
-  const m = e.target.dataset.model;
-  if (!m) return;
+  const m = e.target.dataset.model; if (!m) return;
   const idx = agents.findIndex(a => a.id === currentAgentId);
   if (idx >= 0) { agents[idx].model = m; saveAgents(); }
   document.getElementById('model-badge').textContent = m;
-  pickerEl.style.display = 'none';
-  renderAgents();
+  pickerEl.style.display = 'none'; renderAgents();
   toast(`模型已切换：${m}`);
 });
 document.addEventListener('click', e => { if (!pickerWrap.contains(e.target)) pickerEl.style.display = 'none'; });
@@ -716,55 +759,168 @@ document.addEventListener('click', e => { if (!pickerWrap.contains(e.target)) pi
 function addImageFile(file) {
   if (!file.type.startsWith('image/')) return;
   const reader = new FileReader();
-  reader.onload = ev => {
-    pendingImages.push({ id:`img${Date.now()}`, dataUrl: ev.target.result, mimeType: file.type });
-    renderImagePreviews();
-  };
+  reader.onload = ev => { pendingImages.push({ id:`img${Date.now()}`, dataUrl:ev.target.result, mimeType:file.type }); renderImagePreviews(); };
   reader.readAsDataURL(file);
 }
-
 function renderImagePreviews() {
   const wrap = document.getElementById('image-previews');
   if (!pendingImages.length) { wrap.classList.remove('has-images'); wrap.innerHTML = ''; return; }
   wrap.classList.add('has-images');
-  wrap.innerHTML = pendingImages.map(img => `
-    <div class="img-thumb">
-      <img src="${img.dataUrl}" alt="">
-      <button class="img-remove" data-id="${img.id}">×</button>
-    </div>`).join('');
-  wrap.querySelectorAll('.img-remove').forEach(btn =>
-    btn.addEventListener('click', () => {
-      pendingImages = pendingImages.filter(i => i.id !== btn.dataset.id);
-      renderImagePreviews();
-    }));
+  wrap.innerHTML = pendingImages.map(img => `<div class="img-thumb"><img src="${img.dataUrl}" alt=""><button class="img-remove" data-id="${img.id}">×</button></div>`).join('');
+  wrap.querySelectorAll('.img-remove').forEach(btn => btn.addEventListener('click', () => { pendingImages = pendingImages.filter(i => i.id !== btn.dataset.id); renderImagePreviews(); }));
 }
-
-// paste image
 document.addEventListener('paste', e => {
   const imgs = [...e.clipboardData.items].filter(i => i.type.startsWith('image/'));
-  if (!imgs.length) return;
-  e.preventDefault();
-  imgs.forEach(i => addImageFile(i.getAsFile()));
-  document.getElementById('input').focus();
+  if (!imgs.length) return; e.preventDefault();
+  imgs.forEach(i => addImageFile(i.getAsFile())); document.getElementById('input').focus();
 });
-
-// drag & drop
 const inputArea = document.getElementById('input-area');
 inputArea.addEventListener('dragover',  e => { e.preventDefault(); inputArea.classList.add('drag-over'); });
 inputArea.addEventListener('dragleave', ()  => inputArea.classList.remove('drag-over'));
-inputArea.addEventListener('drop', e => {
-  e.preventDefault(); inputArea.classList.remove('drag-over');
-  [...e.dataTransfer.files].filter(f => f.type.startsWith('image/')).forEach(addImageFile);
-});
-
-// file picker
+inputArea.addEventListener('drop', e => { e.preventDefault(); inputArea.classList.remove('drag-over'); [...e.dataTransfer.files].filter(f => f.type.startsWith('image/')).forEach(addImageFile); });
 document.getElementById('attach-btn').addEventListener('click', () => document.getElementById('file-input').click());
-document.getElementById('file-input').addEventListener('change', e => {
-  [...e.target.files].forEach(addImageFile);
-  e.target.value = '';
+document.getElementById('file-input').addEventListener('change', e => { [...e.target.files].forEach(addImageFile); e.target.value = ''; });
+
+// ── Skills rendering ──────────────────────────────────────────────
+function renderSkills() {
+  document.getElementById('skill-count').textContent = skills.length;
+  const list = document.getElementById('skill-list');
+  if (!skills.length) {
+    list.innerHTML = '<div style="padding:4px 14px;font-size:11px;color:var(--text2)">暂无技能，输入 / 查看默认</div>';
+    return;
+  }
+  list.innerHTML = skills.map(s => `
+    <div class="skill-item" data-skill-id="${s.id}">
+      <span class="skill-emoji">${s.emoji}</span>
+      <span class="skill-slash">/</span>
+      <span class="skill-name">${s.name}</span>
+      <span class="skill-desc">${s.desc}</span>
+      <button class="skill-edit" data-skill-edit="${s.id}" title="编辑">✎</button>
+    </div>`).join('');
+  list.querySelectorAll('.skill-item').forEach(el =>
+    el.addEventListener('click', e => {
+      const editId = e.target.closest('[data-skill-edit]')?.dataset.skillEdit;
+      if (editId) { openEditSkill(editId); return; }
+      applySkillToInput(el.dataset.skillId);
+    }));
+}
+
+// ── Skills collapse toggle ────────────────────────────────────────
+document.getElementById('skills-header').addEventListener('click', () => {
+  const body   = document.getElementById('skills-body');
+  const chev   = document.getElementById('skills-chevron');
+  const isOpen = body.classList.toggle('open');
+  chev.classList.toggle('open', isOpen);
+  localStorage.setItem('flock_skills_open', isOpen ? '1' : '0');
+});
+function initSkillsSection() {
+  const open = localStorage.getItem('flock_skills_open') !== '0'; // default open
+  if (open) {
+    document.getElementById('skills-body').classList.add('open');
+    document.getElementById('skills-chevron').classList.add('open');
+  }
+}
+
+// ── Apply skill to input ──────────────────────────────────────────
+function applySkillToInput(skillId) {
+  const skill = getSkill(skillId); if (!skill) return;
+  const inputEl = document.getElementById('input');
+  const current = inputEl.value.trim();
+  // Replace {input} with current text, or leave as placeholder
+  const prompt  = skill.prompt.replace('{input}', current || '{input}');
+  inputEl.value = prompt;
+  autoResize(inputEl); updateCharCount();
+  // Select the {input} placeholder if still present so user can type right away
+  const ph = prompt.indexOf('{input}');
+  if (ph >= 0) inputEl.setSelectionRange(ph, ph + 7);
+  inputEl.focus();
+  toast(`已应用技能：${skill.emoji} ${skill.name}`);
+}
+
+// ── Slash command picker ──────────────────────────────────────────
+function getFilteredSkills(query) {
+  const q = query.toLowerCase();
+  return skills.filter(s => !q || s.name.toLowerCase().startsWith(q) || s.desc.toLowerCase().includes(q));
+}
+
+function openSlashPicker(query) {
+  const picker   = document.getElementById('slash-picker');
+  const filtered = getFilteredSkills(query);
+  if (!filtered.length) { closeSlashPicker(); return; }
+  slashIdx = 0;
+  picker.innerHTML = `
+    <div class="slash-picker-header">
+      <span>技能 &nbsp;·&nbsp; ${filtered.length} 个可用</span>
+      <span class="slash-picker-hint">↑↓ 导航 · Enter 选择 · Esc 关闭</span>
+    </div>
+    ${filtered.map((s, i) => `
+      <div class="slash-picker-item ${i === 0 ? 'active' : ''}" data-idx="${i}">
+        <span class="slash-picker-emoji">${s.emoji}</span>
+        <span class="slash-picker-cmd">/${s.name}</span>
+        <span class="slash-picker-desc">${s.desc}</span>
+      </div>`).join('')}`;
+  picker.classList.add('open');
+  picker.querySelectorAll('.slash-picker-item').forEach((el, i) =>
+    el.addEventListener('mousedown', e => { e.preventDefault(); applySlashSkill(filtered[i]); }));
+}
+
+function closeSlashPicker() {
+  document.getElementById('slash-picker').classList.remove('open');
+  slashIdx = 0;
+}
+
+function updateSlashActive() {
+  const items = document.querySelectorAll('.slash-picker-item');
+  items.forEach((el, i) => el.classList.toggle('active', i === slashIdx));
+  items[slashIdx]?.scrollIntoView({ block:'nearest' });
+}
+
+function applySlashSkill(skill) {
+  closeSlashPicker();
+  const inputEl = document.getElementById('input');
+  // Extract text typed after /command (e.g. "/translate hello" → extraText = "hello")
+  const current = inputEl.value;
+  const spaceIdx = current.indexOf(' ');
+  const extraText = spaceIdx > 0 ? current.slice(spaceIdx + 1).trim() : '';
+  const prompt = skill.prompt.replace('{input}', extraText || '{input}');
+  inputEl.value = prompt;
+  autoResize(inputEl); updateCharCount();
+  const ph = prompt.indexOf('{input}');
+  if (ph >= 0) inputEl.setSelectionRange(ph, ph + 7);
+  inputEl.focus();
+}
+
+// Input monitoring for slash commands
+const inputEl = document.getElementById('input');
+inputEl.addEventListener('input', () => {
+  autoResize(inputEl); updateCharCount();
+  const val = inputEl.value;
+  if (val.startsWith('/')) {
+    const query = val.slice(1).split(' ')[0]; // text after /
+    openSlashPicker(query);
+  } else {
+    closeSlashPicker();
+  }
+});
+inputEl.addEventListener('keydown', e => {
+  const picker = document.getElementById('slash-picker');
+  if (picker.classList.contains('open')) {
+    const items = picker.querySelectorAll('.slash-picker-item');
+    const filtered = getFilteredSkills(inputEl.value.slice(1).split(' ')[0]);
+    if (e.key === 'ArrowDown') { e.preventDefault(); slashIdx = Math.min(slashIdx + 1, items.length - 1); updateSlashActive(); return; }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); slashIdx = Math.max(slashIdx - 1, 0); updateSlashActive(); return; }
+    if (e.key === 'Enter')     { e.preventDefault(); if (filtered[slashIdx]) applySlashSkill(filtered[slashIdx]); return; }
+    if (e.key === 'Escape')    { e.preventDefault(); closeSlashPicker(); return; }
+    if (e.key === 'Tab')       { e.preventDefault(); if (filtered[slashIdx]) applySlashSkill(filtered[slashIdx]); return; }
+  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); return; }
+  setTimeout(() => { autoResize(e.target); updateCharCount(); }, 0);
+});
+document.addEventListener('click', e => {
+  if (!document.getElementById('slash-picker').contains(e.target) && e.target !== inputEl) closeSlashPicker();
 });
 
-// ── Render sidebar ────────────────────────────────────────────────
+// ── Render sidebar agents ─────────────────────────────────────────
 function renderAgents() {
   document.getElementById('agent-list').innerHTML = agents.map(a => `
     <div class="agent-item ${a.id === currentAgentId ? 'active' : ''}" data-id="${a.id}">
@@ -785,10 +941,7 @@ function renderHistory() {
   const q = filterQuery.toLowerCase().trim();
   const convs = getConvs(currentAgentId).filter(c => !q || c.title.toLowerCase().includes(q));
   const list  = document.getElementById('history-list');
-  if (!convs.length) {
-    list.innerHTML = `<div style="padding:5px 14px;font-size:11px;color:var(--text2)">${q ? '无匹配历史' : '暂无历史'}</div>`;
-    return;
-  }
+  if (!convs.length) { list.innerHTML = `<div style="padding:5px 14px;font-size:11px;color:var(--text2)">${q ? '无匹配历史' : '暂无历史'}</div>`; return; }
   list.innerHTML = convs.map(c => `
     <div class="history-item ${c.id === currentConvId ? 'active' : ''}" data-id="${c.id}">
       <span class="history-title" data-title-id="${c.id}">${c.title}</span>
@@ -800,35 +953,24 @@ function renderHistory() {
       if (e.target.classList.contains('rename-input')) return;
       loadConv(el.dataset.id);
     }));
-  // double-click to rename
   list.querySelectorAll('.history-title').forEach(titleEl =>
-    titleEl.addEventListener('dblclick', e => {
-      e.stopPropagation();
-      startRename(titleEl.dataset.titleId, titleEl);
-    }));
+    titleEl.addEventListener('dblclick', e => { e.stopPropagation(); startRename(titleEl.dataset.titleId, titleEl); }));
 }
 
 // ── Conversation rename ───────────────────────────────────────────
 function startRename(convId, titleEl) {
-  const conv = conversations[convId];
-  if (!conv) return;
+  const conv = conversations[convId]; if (!conv) return;
   const input = document.createElement('input');
-  input.className = 'rename-input';
-  input.value = conv.title;
-  titleEl.replaceWith(input);
-  input.focus(); input.select();
+  input.className = 'rename-input'; input.value = conv.title;
+  titleEl.replaceWith(input); input.focus(); input.select();
   let saved = false;
   const save = () => {
     if (saved) return; saved = true;
-    const v = input.value.trim();
-    if (v && v !== conv.title) { conv.title = v; saveConvs(); }
+    const v = input.value.trim(); if (v && v !== conv.title) { conv.title = v; saveConvs(); }
     renderHistory();
   };
   input.addEventListener('blur', save);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); save(); }
-    if (e.key === 'Escape') { saved = true; renderHistory(); }
-  });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); save(); } if (e.key === 'Escape') { saved = true; renderHistory(); } });
 }
 
 // ── Agent selection ──────────────────────────────────────────────
@@ -841,8 +983,7 @@ function selectAgent(id) {
   document.getElementById('model-badge').textContent  = a.model;
   document.getElementById('sysprompt-input').value    = getSysPrompt(id);
   renderAgents(); renderHistory();
-  const convs = getConvs(id);
-  convs.length ? loadConv(convs[0].id) : showEmpty();
+  const convs = getConvs(id); convs.length ? loadConv(convs[0].id) : showEmpty();
 }
 
 function showEmpty() {
@@ -853,7 +994,7 @@ function showEmpty() {
       <div class="empty-logo">FLOCK</div>
       <div class="empty-hint">和 ${a.emoji} ${a.name} 开始对话</div>
       <div class="empty-shortcuts">
-        <div class="shortcut-row"><span class="kbd">Enter</span><span>发送消息</span></div>
+        <div class="shortcut-row"><span class="kbd">/</span><span>调用技能</span></div>
         <div class="shortcut-row"><span class="kbd">Ctrl+N</span><span>新对话</span></div>
         <div class="shortcut-row"><span class="kbd">Ctrl+K</span><span>搜索历史</span></div>
         <div class="shortcut-row"><span class="kbd">Ctrl+/</span><span>收起侧栏</span></div>
@@ -873,32 +1014,26 @@ function loadConv(id) {
   });
   scrollBottom();
 }
-
 function delConv(id) {
   delete conversations[id]; saveConvs();
   if (currentConvId === id) showEmpty();
-  renderHistory();
-  toast('对话已删除', 'warn');
+  renderHistory(); toast('对话已删除', 'warn');
 }
 
 // ── Message rendering ────────────────────────────────────────────
 function makeMsgActions(role, text, idx, ts) {
-  const div = document.createElement('div');
-  div.className = 'msg-actions';
+  const div = document.createElement('div'); div.className = 'msg-actions';
   if (ts) { const s = document.createElement('span'); s.className = 'msg-ts'; s.textContent = formatTime(ts); div.appendChild(s); }
-  const copyBtn = document.createElement('button');
-  copyBtn.className = 'msg-act'; copyBtn.textContent = '复制';
+  const copyBtn = document.createElement('button'); copyBtn.className = 'msg-act'; copyBtn.textContent = '复制';
   copyBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(text).then(() => {
-      copyBtn.textContent = '✓'; copyBtn.classList.add('ok');
-      toast('已复制到剪贴板');
+      copyBtn.textContent = '✓'; copyBtn.classList.add('ok'); toast('已复制到剪贴板');
       setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('ok'); }, 2000);
     });
   });
   div.appendChild(copyBtn);
   if (role === 'assistant') {
-    const regen = document.createElement('button');
-    regen.className = 'msg-act'; regen.textContent = '重新生成';
+    const regen = document.createElement('button'); regen.className = 'msg-act'; regen.textContent = '重新生成';
     regen.dataset.regen = idx;
     regen.addEventListener('click', () => regenerate(parseInt(regen.dataset.regen)));
     div.appendChild(regen);
@@ -917,61 +1052,47 @@ function appendUser(text, imgDataUrls, ts, idx) {
     body.appendChild(imgRow);
   }
   const contentEl = document.createElement('div'); contentEl.className = 'message-content';
-  contentEl.innerHTML = escHtml(text);
-  body.appendChild(contentEl);
-  d.appendChild(av); d.appendChild(body);
-  d.appendChild(makeMsgActions('user', text, idx ?? 0, ts));
+  contentEl.innerHTML = escHtml(text); body.appendChild(contentEl);
+  d.appendChild(av); d.appendChild(body); d.appendChild(makeMsgActions('user', text, idx ?? 0, ts));
   m.appendChild(d);
 }
 
 function appendBotStatic(text, ts, idx) {
-  const m = document.getElementById('messages');
-  const a = getAgent(currentAgentId);
+  const m = document.getElementById('messages'); const a = getAgent(currentAgentId);
   const d = document.createElement('div'); d.className = 'message assistant';
   const av = document.createElement('div'); av.className = 'message-avatar'; av.textContent = a.emoji;
   const body = document.createElement('div'); body.className = 'message-body';
   const contentEl = document.createElement('div'); contentEl.className = 'message-content';
-  renderMd(contentEl, text);
-  body.appendChild(contentEl);
-  d.appendChild(av); d.appendChild(body);
-  d.appendChild(makeMsgActions('assistant', text, idx ?? 0, ts));
-  m.appendChild(d);
-  return contentEl;
+  renderMd(contentEl, text); body.appendChild(contentEl);
+  d.appendChild(av); d.appendChild(body); d.appendChild(makeMsgActions('assistant', text, idx ?? 0, ts));
+  m.appendChild(d); return contentEl;
 }
 
-// Thinking dots — shown before first token arrives
 function appendBotThinking() {
-  const m = document.getElementById('messages');
-  const a = getAgent(currentAgentId);
+  const m = document.getElementById('messages'); const a = getAgent(currentAgentId);
   const d = document.createElement('div'); d.className = 'message assistant';
   d.innerHTML = `<div class="message-avatar">${a.emoji}</div><div class="message-body"><div class="message-content"><div class="thinking-dots"><span></span><span></span><span></span></div></div></div>`;
-  m.appendChild(d);
-  return d.querySelector('.message-content');
+  m.appendChild(d); return d.querySelector('.message-content');
 }
 
 // ── Regenerate ───────────────────────────────────────────────────
 function regenerate(msgIdx) {
   if (isStreaming || !currentConvId) return;
-  const conv = conversations[currentConvId];
-  if (!conv) return;
+  const conv = conversations[currentConvId]; if (!conv) return;
   conv.messages.splice(msgIdx);
-  const lastUser = [...conv.messages].reverse().find(m => m.role === 'user');
-  if (!lastUser) return;
-  saveConvs(); loadConv(currentConvId);
-  sendMessage(lastUser.content, null);
+  const lastUser = [...conv.messages].reverse().find(m => m.role === 'user'); if (!lastUser) return;
+  saveConvs(); loadConv(currentConvId); sendMessage(lastUser.content, null);
 }
 
 // ── Send ─────────────────────────────────────────────────────────
 async function send() {
   if (isStreaming) return;
-  const inputEl = document.getElementById('input');
-  const text    = inputEl.value.trim();
-  const imgs    = [...pendingImages];
+  const text = inputEl.value.trim(); const imgs = [...pendingImages];
   if (!text && !imgs.length) return;
   inputEl.value = ''; inputEl.style.height = 'auto';
   document.getElementById('char-count').textContent = '';
   document.getElementById('token-est').textContent  = '';
-  pendingImages = []; renderImagePreviews();
+  closeSlashPicker(); pendingImages = []; renderImagePreviews();
   await sendMessage(text, imgs);
 }
 
@@ -981,9 +1102,8 @@ async function sendMessage(text, imgs) {
   const agent = getAgent(currentAgentId);
   document.getElementById('messages').querySelector('.empty-state')?.remove();
 
-  const ts = Date.now();
-  const msgIdx = conv.messages.length;
-  conv.messages.push({ role:'user', content: text, ts });
+  const ts = Date.now(); const msgIdx = conv.messages.length;
+  conv.messages.push({ role:'user', content:text, ts });
   conv.updatedAt = ts;
   if (conv.messages.length === 1) conv.title = text.slice(0, 28) + (text.length > 28 ? '…' : '');
   saveConvs();
@@ -995,10 +1115,7 @@ async function sendMessage(text, imgs) {
   document.getElementById('send-btn').style.display = 'none';
   document.getElementById('stop-btn').style.display = 'flex';
 
-  // Show thinking dots until first token
-  const contentEl = appendBotThinking();
-  scrollBottom();
-
+  const contentEl = appendBotThinking(); scrollBottom();
   const sysPrompt = getSysPrompt(currentAgentId);
   const msgs = [
     ...(sysPrompt ? [{ role:'system', content:sysPrompt }] : []),
@@ -1006,15 +1123,12 @@ async function sendMessage(text, imgs) {
     { role:'user', content: imgs?.length ? [...imgs.map(i => ({ type:'image_url', image_url:{ url:i.dataUrl } })), { type:'text', text }] : text },
   ];
 
-  let full = '';
-  let gotFirstToken = false;
-  let renderPending = false;
+  let full = ''; let gotFirstToken = false; let renderPending = false;
   abortCtrl = new AbortController();
 
   try {
     const res = await fetch('/v1/chat/completions', {
-      method: 'POST',
-      signal: abortCtrl.signal,
+      method: 'POST', signal: abortCtrl.signal,
       headers: { 'Content-Type':'application/json', 'Authorization':'Bearer max-subscription' },
       body: JSON.stringify({ model:agent.model, stream:true, user:getSessionId(agent.id), messages:msgs }),
     });
@@ -1029,49 +1143,31 @@ async function sendMessage(text, imgs) {
         if (!line.startsWith('data: ')) continue;
         const data = line.slice(6).trim(); if (data === '[DONE]') continue;
         try {
-          const delta = JSON.parse(data)?.choices?.[0]?.delta?.content || '';
-          if (!delta) continue;
-
-          // Replace thinking dots on first token
-          if (!gotFirstToken) {
-            gotFirstToken = true;
-            contentEl.innerHTML = '';
-            contentEl.classList.add('streaming');
-          }
+          const delta = JSON.parse(data)?.choices?.[0]?.delta?.content || ''; if (!delta) continue;
+          if (!gotFirstToken) { gotFirstToken = true; contentEl.innerHTML = ''; contentEl.classList.add('streaming'); }
           full += delta;
-
-          // rAF-batched rendering for smooth live markdown
           if (!renderPending) {
             renderPending = true;
             requestAnimationFrame(() => {
-              contentEl.innerHTML = safeStreamMd(full);
-              wrapCodeBlocks(contentEl);
-              scrollBottom();
-              renderPending = false;
+              contentEl.innerHTML = safeStreamMd(full); wrapCodeBlocks(contentEl);
+              scrollBottom(); renderPending = false;
             });
           }
         } catch {}
       }
     }
   } catch (err) {
-    if (err.name === 'AbortError') {
-      full = full || '（已停止生成）';
-    } else {
-      full = `⚠ ${err.message}`;
-      contentEl.innerHTML = `<span style="color:var(--danger)">${escHtml(err.message)}</span>`;
-      toast(err.message, 'err');
-    }
+    if (err.name === 'AbortError') { full = full || '（已停止生成）'; }
+    else { full = `⚠ ${err.message}`; contentEl.innerHTML = `<span style="color:var(--danger)">${escHtml(err.message)}</span>`; toast(err.message, 'err'); }
   }
 
   contentEl.classList.remove('streaming');
   if (full && !full.startsWith('⚠')) renderMd(contentEl, full);
 
-  const botTs  = Date.now();
-  const botIdx = conv.messages.length;
+  const botTs = Date.now(); const botIdx = conv.messages.length;
   conv.messages.push({ role:'assistant', content:full, ts:botTs });
   conv.updatedAt = botTs; saveConvs(); renderHistory();
 
-  // replace streaming msg-actions with real ones
   const msgEl = contentEl.closest('.message');
   msgEl?.querySelector('.msg-actions')?.remove();
   msgEl?.appendChild(makeMsgActions('assistant', full, botIdx, botTs));
@@ -1080,40 +1176,37 @@ async function sendMessage(text, imgs) {
   isStreaming = false; abortCtrl = null;
   document.getElementById('send-btn').style.display = '';
   document.getElementById('stop-btn').style.display = 'none';
-  document.getElementById('input').focus();
+  inputEl.focus();
 }
 
 // ── Export ───────────────────────────────────────────────────────
 function exportConversation() {
   if (!currentConvId) return;
-  const conv  = conversations[currentConvId];
-  const agent = getAgent(currentAgentId);
+  const conv = conversations[currentConvId]; const agent = getAgent(currentAgentId);
   const lines = [`# ${conv.title}\n\n_导出时间: ${new Date().toLocaleString('zh')}_\n_助手: ${agent.emoji} ${agent.name} | 模型: ${agent.model}_\n`];
   conv.messages.forEach(m => {
     const role = m.role === 'user' ? '**你**' : `**${agent.emoji} ${agent.name}**`;
     lines.push(`\n---\n\n${role}\n\n${m.content}\n`);
   });
   const blob = new Blob([lines.join('')], { type:'text/markdown;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = `${conv.title.replace(/[/\\?%*:|"<>]/g,'_')}.md`;
-  a.click(); URL.revokeObjectURL(a.href);
-  toast('对话已导出为 Markdown');
+  a.click(); URL.revokeObjectURL(a.href); toast('对话已导出为 Markdown');
 }
 
 // ── Status check ─────────────────────────────────────────────────
 async function checkStatus() {
   try {
     const r = await fetch('/v1/models', { headers:{ 'Authorization':'Bearer max-subscription' }, signal:AbortSignal.timeout(3000) });
-    document.getElementById('status-dot').className   = `status-dot ${r.ok ? 'online' : 'offline'}`;
+    document.getElementById('status-dot').className    = `status-dot ${r.ok ? 'online' : 'offline'}`;
     document.getElementById('status-text').textContent = r.ok ? 'MaxProxy 在线' : 'MaxProxy 离线';
   } catch {
-    document.getElementById('status-dot').className   = 'status-dot offline';
+    document.getElementById('status-dot').className    = 'status-dot offline';
     document.getElementById('status-text').textContent = 'MaxProxy 离线';
   }
 }
 
-// ── System prompt ────────────────────────────────────────────────
+// ── System prompt ─────────────────────────────────────────────────
 document.getElementById('sysprompt-toggle').addEventListener('click', () => {
   const body = document.getElementById('sysprompt-body'); const tgl = document.getElementById('sysprompt-toggle');
   const open = body.classList.toggle('open'); tgl.classList.toggle('open', open);
@@ -1121,10 +1214,7 @@ document.getElementById('sysprompt-toggle').addEventListener('click', () => {
 document.getElementById('sysprompt-input').addEventListener('input', e => setSysPrompt(currentAgentId, e.target.value.trim()));
 
 // ── History search ────────────────────────────────────────────────
-document.getElementById('history-search').addEventListener('input', e => {
-  filterQuery = e.target.value;
-  renderHistory();
-});
+document.getElementById('history-search').addEventListener('input', e => { filterQuery = e.target.value; renderHistory(); });
 
 // ── Lightbox ─────────────────────────────────────────────────────
 document.getElementById('messages').addEventListener('click', e => {
@@ -1145,104 +1235,140 @@ function closeModal() { document.getElementById('modal-overlay').classList.remov
 // ── Agent CRUD ────────────────────────────────────────────────────
 function openManageAgents() {
   const cards = agents.map(a => `
-    <div class="agent-card">
-      <span class="agent-card-emoji">${a.emoji}</span>
-      <div class="agent-card-info">
-        <div class="agent-card-name">${a.name}</div>
-        <div class="agent-card-model">${a.model}</div>
-        <div class="agent-card-desc">${a.desc || ''}</div>
+    <div class="card">
+      <span class="card-icon">${a.emoji}</span>
+      <div class="card-info">
+        <div class="card-name">${a.name}</div>
+        <div class="card-sub">${a.model}</div>
+        <div class="card-desc">${a.desc || ''}</div>
       </div>
-      <div class="agent-card-actions">
+      <div class="card-actions">
         <button class="btn btn-secondary btn-sm" onclick="openEditAgent('${a.id}')">编辑</button>
         ${agents.length > 1 ? `<button class="btn btn-danger btn-sm" onclick="deleteAgent('${a.id}')">删除</button>` : ''}
       </div>
     </div>`).join('');
-  openModal('管理助手', cards,
-    `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>
-     <button class="btn btn-primary"   onclick="openAddAgent()">+ 添加助手</button>`);
+  openModal('管理助手', cards, `<button class="btn btn-secondary" onclick="closeModal()">关闭</button><button class="btn btn-primary" onclick="openAddAgent()">+ 添加助手</button>`);
 }
-
 function agentFormHTML(a) {
-  const opts = MODELS.map(m => `<option value="${m}" ${(a?.model || MODELS[0]) === m ? 'selected' : ''}>${m}</option>`).join('');
-  return `
-    <div class="form-two form-row">
-      <div><label>图标</label><input id="f-emoji" value="${a?.emoji||'🤖'}" maxlength="2" style="text-align:center;font-size:18px"></div>
-      <div><label>名称</label><input id="f-name"  value="${a?.name||''}" placeholder="助手名称"></div>
-    </div>
-    <div class="form-row"><label>模型</label><select id="f-model">${opts}</select></div>
-    <div class="form-row"><label>描述</label><input id="f-desc" value="${a?.desc||''}" placeholder="一句话描述用途"></div>
-    <div class="form-row">
-      <label>系统提示词（可选）</label>
-      <textarea id="f-sys" placeholder="角色设定和规则...">${a ? getSysPrompt(a.id) : ''}</textarea>
-    </div>`;
+  const opts = MODELS.map(m => `<option value="${m}" ${(a?.model||MODELS[0])===m?'selected':''}>${m}</option>`).join('');
+  return `<div class="form-two form-row">
+    <div><label>图标</label><input id="f-emoji" value="${a?.emoji||'🤖'}" maxlength="2" style="text-align:center;font-size:18px"></div>
+    <div><label>名称</label><input id="f-name" value="${a?.name||''}" placeholder="助手名称"></div>
+  </div>
+  <div class="form-row"><label>模型</label><select id="f-model">${opts}</select></div>
+  <div class="form-row"><label>描述</label><input id="f-desc" value="${a?.desc||''}" placeholder="一句话描述用途"></div>
+  <div class="form-row"><label>系统提示词（可选）</label><textarea id="f-sys" style="height:80px" placeholder="角色设定...">${a?getSysPrompt(a.id):''}</textarea></div>`;
 }
 function openAddAgent()    { openModal('添加助手', agentFormHTML(null), `<button class="btn btn-secondary" onclick="openManageAgents()">取消</button><button class="btn btn-primary" onclick="submitAddAgent()">添加</button>`); }
 function openEditAgent(id) { openModal(`编辑：${getAgent(id).name}`, agentFormHTML(getAgent(id)), `<button class="btn btn-secondary" onclick="openManageAgents()">取消</button><button class="btn btn-primary" onclick="submitEditAgent('${id}')">保存</button>`); }
-
 function submitAddAgent() {
   const name = document.getElementById('f-name').value.trim(); if (!name) return;
   const id = `a${Date.now()}`;
   agents.push({ id, name, emoji:document.getElementById('f-emoji').value.trim()||'🤖', model:document.getElementById('f-model').value, desc:document.getElementById('f-desc').value.trim() });
   setSysPrompt(id, document.getElementById('f-sys').value.trim());
-  saveAgents(); renderAgents(); openManageAgents();
-  toast(`助手 ${name} 已添加`);
+  saveAgents(); renderAgents(); openManageAgents(); toast(`助手 ${name} 已添加`);
 }
 function submitEditAgent(id) {
   const idx = agents.findIndex(a => a.id === id); if (idx < 0) return;
   const name = document.getElementById('f-name').value.trim();
   agents[idx] = { ...agents[idx], name:name||agents[idx].name, emoji:document.getElementById('f-emoji').value.trim()||agents[idx].emoji, model:document.getElementById('f-model').value, desc:document.getElementById('f-desc').value.trim() };
   setSysPrompt(id, document.getElementById('f-sys').value.trim());
-  saveAgents(); if (id === currentAgentId) selectAgent(id); else renderAgents(); openManageAgents();
-  toast('已保存');
+  saveAgents(); if (id===currentAgentId) selectAgent(id); else renderAgents(); openManageAgents(); toast('已保存');
 }
 function deleteAgent(id) {
   if (!confirm('删除此助手及其所有对话历史？')) return;
   agents = agents.filter(a => a.id !== id);
-  Object.keys(conversations).forEach(k => { if (conversations[k].agentId === id) delete conversations[k]; });
-  ['flock_sid_', 'flock_sysprompt_'].forEach(p => localStorage.removeItem(p + id));
+  Object.keys(conversations).forEach(k => { if (conversations[k].agentId===id) delete conversations[k]; });
+  ['flock_sid_','flock_sysprompt_'].forEach(p => localStorage.removeItem(p+id));
   saveAgents(); saveConvs();
-  if (currentAgentId === id) selectAgent(agents[0].id); else renderAgents();
-  openManageAgents();
-  toast('助手已删除', 'warn');
+  if (currentAgentId===id) selectAgent(agents[0].id); else renderAgents();
+  openManageAgents(); toast('助手已删除', 'warn');
+}
+
+// ── Skills CRUD ───────────────────────────────────────────────────
+function openManageSkills() {
+  const cards = skills.map(s => `
+    <div class="card">
+      <span class="card-icon">${s.emoji}</span>
+      <div class="card-info">
+        <div class="card-name">${s.name}</div>
+        <div class="card-sub">/${s.name}</div>
+        <div class="card-desc">${s.desc}</div>
+        <div class="card-prompt">${s.prompt.slice(0, 60).replace(/\n/g,' ')}${s.prompt.length>60?'…':''}</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openEditSkill('${s.id}')">编辑</button>
+        <button class="btn btn-danger btn-sm"    onclick="deleteSkill('${s.id}')">删除</button>
+      </div>
+    </div>`).join('') || '<div style="color:var(--text2);font-size:13px;padding:8px 0">暂无技能</div>';
+  openModal('管理技能', cards, `<button class="btn btn-secondary" onclick="closeModal()">关闭</button><button class="btn btn-primary" onclick="openAddSkill()">+ 添加技能</button>`);
+}
+
+function skillFormHTML(s) {
+  return `<div class="form-two form-row">
+    <div><label>图标</label><input id="sf-emoji" value="${s?.emoji||'⚡'}" maxlength="2" style="text-align:center;font-size:18px"></div>
+    <div><label>命令名（英文）</label><input id="sf-name" value="${s?.name||''}" placeholder="例如: translate"></div>
+  </div>
+  <div class="form-row"><label>描述</label><input id="sf-desc" value="${s?.desc||''}" placeholder="一句话描述"></div>
+  <div class="form-row">
+    <label>提示词模板</label>
+    <textarea id="sf-prompt" style="height:120px" placeholder="用 {input} 作为用户输入的占位符">${s?.prompt||''}</textarea>
+    <div class="form-hint">提示：用 <code style="color:var(--accent);font-family:var(--mono)">{input}</code> 表示用户输入内容的位置</div>
+  </div>`;
+}
+function openAddSkill()    { openModal('添加技能', skillFormHTML(null), `<button class="btn btn-secondary" onclick="openManageSkills()">取消</button><button class="btn btn-primary" onclick="submitAddSkill()">添加</button>`); }
+function openEditSkill(id) {
+  const s = getSkill(id); if (!s) return;
+  openModal(`编辑技能：/${s.name}`, skillFormHTML(s), `<button class="btn btn-secondary" onclick="openManageSkills()">取消</button><button class="btn btn-primary" onclick="submitEditSkill('${id}')">保存</button>`);
+}
+function submitAddSkill() {
+  const name = document.getElementById('sf-name').value.trim().replace(/\s+/g,'-').toLowerCase(); if (!name) return;
+  const prompt = document.getElementById('sf-prompt').value.trim(); if (!prompt) return;
+  if (skills.find(s => s.name === name)) { toast(`命令 /${name} 已存在`, 'warn'); return; }
+  const id = `sk${Date.now()}`;
+  skills.push({ id, name, emoji:document.getElementById('sf-emoji').value.trim()||'⚡', desc:document.getElementById('sf-desc').value.trim()||name, prompt });
+  saveSkills(); renderSkills(); openManageSkills(); toast(`技能 /${name} 已添加`);
+}
+function submitEditSkill(id) {
+  const idx = skills.findIndex(s => s.id === id); if (idx < 0) return;
+  const name   = document.getElementById('sf-name').value.trim().replace(/\s+/g,'-').toLowerCase() || skills[idx].name;
+  const prompt = document.getElementById('sf-prompt').value.trim() || skills[idx].prompt;
+  skills[idx]  = { ...skills[idx], name, emoji:document.getElementById('sf-emoji').value.trim()||skills[idx].emoji, desc:document.getElementById('sf-desc').value.trim()||skills[idx].desc, prompt };
+  saveSkills(); renderSkills(); openManageSkills(); toast('技能已保存');
+}
+function deleteSkill(id) {
+  if (!confirm('删除此技能？')) return;
+  skills = skills.filter(s => s.id !== id);
+  saveSkills(); renderSkills(); openManageSkills(); toast('技能已删除', 'warn');
 }
 
 // ── Events ───────────────────────────────────────────────────────
 document.getElementById('send-btn').addEventListener('click', send);
 document.getElementById('stop-btn').addEventListener('click', () => abortCtrl?.abort());
 document.getElementById('new-chat-btn').addEventListener('click', startNewChat);
-document.getElementById('clear-btn').addEventListener('click', () => {
-  if (!currentConvId) return;
-  const c = conversations[currentConvId];
-  if (!c?.messages.length) return;
-  if (!confirm('清空这个对话的所有消息？')) return;
-  c.messages = []; c.title = '新对话'; c.updatedAt = Date.now(); saveConvs(); showEmpty(); renderHistory();
-  toast('对话已清空', 'warn');
-});
 document.getElementById('export-btn').addEventListener('click', exportConversation);
 document.getElementById('add-agent-btn').addEventListener('click', openAddAgent);
+document.getElementById('add-skill-btn').addEventListener('click', openAddSkill);
+document.getElementById('clear-btn').addEventListener('click', () => {
+  if (!currentConvId) return;
+  const c = conversations[currentConvId]; if (!c?.messages.length) return;
+  if (!confirm('清空这个对话的所有消息？')) return;
+  c.messages=[]; c.title='新对话'; c.updatedAt=Date.now(); saveConvs(); showEmpty(); renderHistory();
+  toast('对话已清空', 'warn');
+});
 document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target===e.currentTarget) closeModal(); });
 
-function startNewChat() {
-  currentConvId = null; showEmpty(); renderHistory();
-  document.getElementById('input').focus();
-}
+function startNewChat() { currentConvId=null; showEmpty(); renderHistory(); inputEl.focus(); }
 
 // ── Global keyboard shortcuts ─────────────────────────────────────
 document.addEventListener('keydown', e => {
-  // Escape — close modal / lightbox
-  if (e.key === 'Escape') {
-    closeModal();
-    document.getElementById('lightbox').classList.remove('open');
-    return;
-  }
+  if (e.key === 'Escape') { closeModal(); document.getElementById('lightbox').classList.remove('open'); closeSlashPicker(); return; }
   if (!e.ctrlKey && !e.metaKey) return;
   switch (e.key.toLowerCase()) {
-    case 'n':  // Ctrl+N — new chat
-      e.preventDefault(); startNewChat(); break;
-    case '/':  // Ctrl+/ — toggle sidebar
-      e.preventDefault(); toggleSidebar(); break;
-    case 'k':  // Ctrl+K — focus history search
+    case 'n': e.preventDefault(); startNewChat(); break;
+    case '/': e.preventDefault(); toggleSidebar(); break;
+    case 'k':
       e.preventDefault();
       if (sidebarCollapsed()) toggleSidebar();
       setTimeout(() => document.getElementById('history-search').focus(), 240);
@@ -1250,31 +1376,21 @@ document.addEventListener('keydown', e => {
   }
 });
 
-const inputEl = document.getElementById('input');
-inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); return; }
-  setTimeout(() => { autoResize(e.target); updateCharCount(); }, 0);
-});
-inputEl.addEventListener('input', () => { autoResize(inputEl); updateCharCount(); });
-
 function updateCharCount() {
   const n = inputEl.value.length;
-  const charEl = document.getElementById('char-count');
-  const tokEl  = document.getElementById('token-est');
+  const charEl = document.getElementById('char-count'); const tokEl = document.getElementById('token-est');
   if (n > 0) {
-    charEl.textContent = `${n} 字`;
-    charEl.style.color = n > 3000 ? 'var(--warn)' : 'var(--text2)';
+    charEl.textContent = `${n} 字`; charEl.style.color = n > 3000 ? 'var(--warn)' : 'var(--text2)';
     tokEl.textContent  = `≈ ${Math.round(n / 3.5)} tokens`;
-  } else {
-    charEl.textContent = '';
-    tokEl.textContent  = '';
-  }
+  } else { charEl.textContent = ''; tokEl.textContent = ''; }
 }
 
 // ── Init ─────────────────────────────────────────────────────────
 if (!agents.find(a => a.id === currentAgentId)) currentAgentId = agents[0].id;
 initSidebar();
+initSkillsSection();
 renderAgents();
+renderSkills();
 selectAgent(currentAgentId);
 checkStatus();
 setInterval(checkStatus, 30_000);
