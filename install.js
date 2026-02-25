@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * FLOCK Installer
+ * FLOCK Installer v1.1.0
  * Claude Max × OpenClaw — 一键部署飞书 AI 助手
- * https://github.com/your-org/flock
+ * https://github.com/Kitjesen/flock
  */
 
 'use strict';
@@ -44,9 +44,12 @@ ${C.reset}${D('  Claude Max × OpenClaw  |  一键部署飞书 AI 助手  |  v1.
 `);
 }
 
+// ── Version ───────────────────────────────────────────────────────
+const VERSION = '1.1.0';
+
 // ── Step / Log helpers ────────────────────────────────────────────
 let _step = 0;
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 
 function step(name) {
   _step++;
@@ -582,10 +585,57 @@ function createShortcuts(cfg) {
   }
 }
 
+// ── Step 9: 注册 flock CLI 全局命令 ──────────────────────────────
+function installFlockCli() {
+  step('注册 flock CLI 全局命令');
+  const r = run('npm link --silent', { cwd: INSTALLER_DIR });
+  if (r === null) {
+    // fallback: 直接把 bin/flock.js 拷到 openclaw dir 并设 PATH
+    const src = path.join(INSTALLER_DIR, 'bin', 'flock.js');
+    const dst = path.join(OPENCLAW_DIR,  'flock.js');
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, dst);
+      warn('npm link 失败，已手动复制 flock.js 到 ~/.openclaw/');
+      info(`运行命令: node "${dst}" <命令>`);
+    } else {
+      warn('flock CLI 注册失败，请手动运行: npm link');
+    }
+  } else {
+    ok('flock CLI 已注册，可全局使用 `flock` 命令');
+    info('示例: flock status / flock doctor / flock update');
+  }
+}
+
+// ── Check for newer version (non-blocking) ───────────────────────
+async function checkForUpdates() {
+  try {
+    const data = await new Promise((resolve, reject) => {
+      const req = http.get(
+        { hostname:'api.github.com', path:'/repos/Kitjesen/flock/releases/latest',
+          headers:{ 'User-Agent':'flock-installer' }, timeout:4000 },
+        res => {
+          let body = '';
+          res.on('data', c => body += c);
+          res.on('end', () => { try { resolve(JSON.parse(body)); } catch { resolve(null); } });
+        }
+      );
+      req.on('error', reject);
+      req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+    });
+    const latest = data?.tag_name?.replace(/^v/, '');
+    if (latest && latest !== VERSION) {
+      console.log(`\n  ${Y('⚡')}  ${Y(`新版本可用: v${latest}（当前: v${VERSION}）`)}  运行 flock update 升级\n`);
+    }
+  } catch { /* 离线或访问失败，静默跳过 */ }
+}
+
 // ── Main ──────────────────────────────────────────────────────────
 async function main() {
   banner();
   const cfg = loadConfig();
+
+  // 非阻塞更新检查
+  checkForUpdates().catch(() => {});
 
   try {
     checkPrereqs(cfg);
@@ -596,6 +646,7 @@ async function main() {
     startServices(cfg);
     await verify(cfg);
     createShortcuts(cfg);
+    installFlockCli();
     success(cfg);
   } catch (err) {
     console.log(`\n  ${R('✗  ' + (err.message || String(err)))}\n`);

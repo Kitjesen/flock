@@ -1,0 +1,17 @@
+{
+  "name": "flock",
+  "version": "1.1.0",
+  "description": "FLOCK — Claude Max × OpenClaw 一键部署飞书 AI 助手",
+  "private": true,
+  "bin": {
+    "flock": "./bin/flock.js"
+  },
+  "scripts": {
+    "setup":  "node install.js",
+    "start":  "node chat/server.js",
+    "doctor": "node bin/flock.js doctor"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

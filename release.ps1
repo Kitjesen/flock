@@ -51,8 +51,12 @@ $Items = @(
     'bootstrap.cmd',
     'setup.cmd',
     'flock.config.json',
+    'package.json',
     'README.md',
-    'patches'
+    'uninstall.ps1',
+    'patches',
+    'bin',
+    'chat'
 )
 
 # 可选：chat UI（如果存在）
