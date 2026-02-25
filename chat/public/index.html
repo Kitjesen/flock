@@ -104,6 +104,16 @@
     .sysprompt-body textarea:focus { outline: none; border-color: var(--accent); }
     .sysprompt-body textarea::placeholder { color: var(--text2); }
 
+    /* history search */
+    .history-search { padding: 4px 10px 2px; flex-shrink: 0; }
+    .history-search input {
+      width: 100%; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text); font-size: 12px;
+      padding: 5px 9px; font-family: var(--font);
+    }
+    .history-search input:focus { outline: none; border-color: var(--accent); }
+    .history-search input::placeholder { color: var(--text2); }
+
     /* history */
     .history-wrap { flex: 1; overflow-y: auto; padding-bottom: 8px; }
     .history-list { display: flex; flex-direction: column; gap: 1px; padding: 0 8px; }
@@ -117,6 +127,13 @@
     .history-del { font-size: 14px; color: var(--text2); opacity: 0; padding: 0 2px; flex-shrink: 0; line-height: 1; }
     .history-item:hover .history-del { opacity: 1; }
     .history-del:hover { color: var(--danger); }
+    /* inline rename */
+    .rename-input {
+      flex: 1; min-width: 0; background: transparent;
+      border: none; border-bottom: 1px solid var(--accent);
+      color: var(--text); font-size: 12px; padding: 0 2px; outline: none;
+      font-family: var(--font);
+    }
 
     /* ── Main ────────────────────────────────────────────────── */
     main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
@@ -152,7 +169,13 @@
 
     /* messages */
     #messages { flex: 1; overflow-y: auto; padding: 10px 0; display: flex; flex-direction: column; gap: 0; }
-    .message { display: flex; gap: 10px; padding: 8px 18px; position: relative; }
+
+    /* Message fade-in animation */
+    @keyframes fadeSlide { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .message {
+      display: flex; gap: 10px; padding: 8px 18px; position: relative;
+      animation: fadeSlide 0.18s ease both;
+    }
     .message:hover { background: rgba(255,255,255,0.018); }
     .message-avatar {
       width: 30px; height: 30px; border-radius: 6px;
@@ -220,9 +243,19 @@
     .code-block-wrap pre code { border-radius: 0 0 6px 6px; font-size: 12.5px !important; }
     .hljs { padding: 12px 14px !important; }
 
-    /* streaming */
+    /* streaming cursor */
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .streaming::after { content:'▋'; animation:blink 0.8s infinite; font-size:13px; color:var(--accent); margin-left:1px; }
+
+    /* thinking dots (before first token) */
+    @keyframes thinkDot { 0%,100%{opacity:0.25;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+    .thinking-dots { display: inline-flex; align-items: center; gap: 5px; padding: 4px 2px; }
+    .thinking-dots span {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      animation: thinkDot 1.1s ease infinite;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.18s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.36s; }
 
     /* empty state */
     #messages .empty-state {
@@ -298,7 +331,9 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 5px 14px 10px;
     }
-    .char-count { font-size: 11px; color: var(--text2); }
+    .input-footer-left { display: flex; align-items: center; gap: 10px; }
+    .char-count  { font-size: 11px; color: var(--text2); }
+    .token-est   { font-size: 11px; color: var(--text2); opacity: 0.7; }
     .input-hint  { font-size: 11px; color: var(--text2); }
 
     /* model quick-pick dropdown */
@@ -323,6 +358,23 @@
     }
     .lightbox.open { display: flex; }
     .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+
+    /* ── Toast ───────────────────────────────────────────────── */
+    #toast-wrap {
+      position: fixed; bottom: 24px; right: 24px; z-index: 999;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+    }
+    @keyframes toastIn  { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(16px); } }
+    .toast {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 16px; font-size: 13px; color: var(--text);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.45); animation: toastIn 0.2s ease both;
+      pointer-events: all; min-width: 180px; max-width: 280px;
+    }
+    .toast.ok   { border-left: 3px solid var(--success); }
+    .toast.warn { border-left: 3px solid var(--warn); }
+    .toast.err  { border-left: 3px solid var(--danger); }
 
     /* ── Modal ───────────────────────────────────────────────── */
     .modal-overlay {
@@ -412,6 +464,9 @@
     </div>
   </div>
   <div class="section-label">历史</div>
+  <div class="history-search">
+    <input id="history-search" placeholder="搜索历史..." autocomplete="off">
+  </div>
   <div class="history-wrap">
     <div class="history-list" id="history-list"></div>
   </div>
@@ -421,7 +476,7 @@
 <!-- ── Main ─────────────────────────────────────────────────────── -->
 <main>
   <div class="chat-header">
-    <button class="sidebar-toggle" id="sidebar-toggle" title="折叠侧栏">
+    <button class="sidebar-toggle" id="sidebar-toggle" title="折叠侧栏 (Ctrl+/)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="chat-header-info">
@@ -458,8 +513,11 @@
       </button>
     </div>
     <div class="input-footer">
-      <span class="char-count" id="char-count"></span>
-      <span class="input-hint">Enter 发送 · Shift+Enter 换行 · Ctrl+V 粘贴图片</span>
+      <div class="input-footer-left">
+        <span class="char-count" id="char-count"></span>
+        <span class="token-est"  id="token-est"></span>
+      </div>
+      <span class="input-hint">Enter · Shift+Enter 换行 · Ctrl+N 新对话 · Ctrl+K 搜索</span>
     </div>
   </div>
 </main>
@@ -478,6 +536,9 @@
 
 <!-- ── Lightbox ──────────────────────────────────────────────────── -->
 <div class="lightbox" id="lightbox"><img id="lightbox-img" src="" alt=""></div>
+
+<!-- ── Toast container ──────────────────────────────────────────── -->
+<div id="toast-wrap"></div>
 
 <!-- ── Hidden file input ─────────────────────────────────────────── -->
 <input type="file" id="file-input" accept="image/*" multiple style="display:none">
@@ -522,6 +583,7 @@ let currentConvId  = null;
 let isStreaming    = false;
 let abortCtrl     = null;
 let pendingImages  = [];   // { id, dataUrl, mimeType }
+let filterQuery    = '';   // history search
 
 // ── Helpers ──────────────────────────────────────────────────────
 const getAgent     = id => agents.find(a => a.id === id) || agents[0];
@@ -539,7 +601,40 @@ const escHtml       = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(
 const formatTime    = ts => ts ? new Date(ts).toLocaleTimeString('zh', {hour:'2-digit', minute:'2-digit'}) : '';
 const sidebarCollapsed = () => localStorage.getItem('flock_sidebar') === '0';
 
+// ── Toast ─────────────────────────────────────────────────────────
+function toast(msg, type = 'ok', duration = 2400) {
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'toastOut 0.28s ease forwards';
+    setTimeout(() => el.remove(), 280);
+  }, duration);
+}
+
 // ── Markdown + syntax highlight ──────────────────────────────────
+
+// Safe streaming markdown: handles incomplete code fences
+function safeStreamMd(text) {
+  const fenceCount = (text.match(/```/g) || []).length;
+  if (fenceCount % 2 !== 0) {
+    // Unclosed fence — render everything up to the last ``` as markdown,
+    // then show the rest as a raw partial code block
+    const lastFence = text.lastIndexOf('```');
+    const safe = text.slice(0, lastFence);
+    const partial = text.slice(lastFence + 3); // content after the fence marker
+    const safeHtml = typeof marked !== 'undefined'
+      ? marked.parse(safe, { breaks:true, gfm:true })
+      : escHtml(safe);
+    return safeHtml + `<pre style="margin-top:8px;border-radius:6px;border:1px solid var(--border);padding:10px 14px;font-size:12.5px;overflow-x:auto;"><code>${escHtml(partial)}</code></pre>`;
+  }
+  return typeof marked !== 'undefined'
+    ? marked.parse(text, { breaks:true, gfm:true })
+    : escHtml(text);
+}
+
 function wrapCodeBlocks(container) {
   container.querySelectorAll('pre').forEach(pre => {
     if (pre.parentElement?.classList.contains('code-block-wrap')) return;
@@ -583,11 +678,12 @@ function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(e
 function initSidebar() {
   if (sidebarCollapsed()) document.getElementById('sidebar').classList.add('collapsed');
 }
-document.getElementById('sidebar-toggle').addEventListener('click', () => {
+document.getElementById('sidebar-toggle').addEventListener('click', toggleSidebar);
+function toggleSidebar() {
   const sb  = document.getElementById('sidebar');
   const was = sb.classList.toggle('collapsed');
   localStorage.setItem('flock_sidebar', was ? '0' : '1');
-});
+}
 
 // ── Model quick-pick ─────────────────────────────────────────────
 const pickerWrap  = document.getElementById('model-picker-wrap');
@@ -612,6 +708,7 @@ pickerEl.addEventListener('click', e => {
   document.getElementById('model-badge').textContent = m;
   pickerEl.style.display = 'none';
   renderAgents();
+  toast(`模型已切换：${m}`);
 });
 document.addEventListener('click', e => { if (!pickerWrap.contains(e.target)) pickerEl.style.display = 'none'; });
 
@@ -685,24 +782,59 @@ function renderAgents() {
 }
 
 function renderHistory() {
-  const convs = getConvs(currentAgentId);
+  const q = filterQuery.toLowerCase().trim();
+  const convs = getConvs(currentAgentId).filter(c => !q || c.title.toLowerCase().includes(q));
   const list  = document.getElementById('history-list');
-  if (!convs.length) { list.innerHTML = '<div style="padding:5px 14px;font-size:11px;color:var(--text2)">暂无历史</div>'; return; }
+  if (!convs.length) {
+    list.innerHTML = `<div style="padding:5px 14px;font-size:11px;color:var(--text2)">${q ? '无匹配历史' : '暂无历史'}</div>`;
+    return;
+  }
   list.innerHTML = convs.map(c => `
     <div class="history-item ${c.id === currentConvId ? 'active' : ''}" data-id="${c.id}">
-      <span class="history-title">${c.title}</span>
+      <span class="history-title" data-title-id="${c.id}">${c.title}</span>
       <span class="history-del" data-del="${c.id}">×</span>
     </div>`).join('');
   list.querySelectorAll('.history-item').forEach(el =>
     el.addEventListener('click', e => {
       if (e.target.dataset.del) { delConv(e.target.dataset.del); return; }
+      if (e.target.classList.contains('rename-input')) return;
       loadConv(el.dataset.id);
     }));
+  // double-click to rename
+  list.querySelectorAll('.history-title').forEach(titleEl =>
+    titleEl.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      startRename(titleEl.dataset.titleId, titleEl);
+    }));
+}
+
+// ── Conversation rename ───────────────────────────────────────────
+function startRename(convId, titleEl) {
+  const conv = conversations[convId];
+  if (!conv) return;
+  const input = document.createElement('input');
+  input.className = 'rename-input';
+  input.value = conv.title;
+  titleEl.replaceWith(input);
+  input.focus(); input.select();
+  let saved = false;
+  const save = () => {
+    if (saved) return; saved = true;
+    const v = input.value.trim();
+    if (v && v !== conv.title) { conv.title = v; saveConvs(); }
+    renderHistory();
+  };
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); save(); }
+    if (e.key === 'Escape') { saved = true; renderHistory(); }
+  });
 }
 
 // ── Agent selection ──────────────────────────────────────────────
 function selectAgent(id) {
   currentAgentId = id; localStorage.setItem('flock_agent', id);
+  filterQuery = ''; document.getElementById('history-search').value = '';
   const a = getAgent(id);
   document.getElementById('header-emoji').textContent = a.emoji;
   document.getElementById('header-name').textContent  = a.name;
@@ -722,7 +854,9 @@ function showEmpty() {
       <div class="empty-hint">和 ${a.emoji} ${a.name} 开始对话</div>
       <div class="empty-shortcuts">
         <div class="shortcut-row"><span class="kbd">Enter</span><span>发送消息</span></div>
-        <div class="shortcut-row"><span class="kbd">Shift+Enter</span><span>换行</span></div>
+        <div class="shortcut-row"><span class="kbd">Ctrl+N</span><span>新对话</span></div>
+        <div class="shortcut-row"><span class="kbd">Ctrl+K</span><span>搜索历史</span></div>
+        <div class="shortcut-row"><span class="kbd">Ctrl+/</span><span>收起侧栏</span></div>
         <div class="shortcut-row"><span class="kbd">Ctrl+V</span><span>粘贴图片</span></div>
       </div>
     </div>`;
@@ -744,6 +878,7 @@ function delConv(id) {
   delete conversations[id]; saveConvs();
   if (currentConvId === id) showEmpty();
   renderHistory();
+  toast('对话已删除', 'warn');
 }
 
 // ── Message rendering ────────────────────────────────────────────
@@ -756,6 +891,7 @@ function makeMsgActions(role, text, idx, ts) {
   copyBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(text).then(() => {
       copyBtn.textContent = '✓'; copyBtn.classList.add('ok');
+      toast('已复制到剪贴板');
       setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('ok'); }, 2000);
     });
   });
@@ -803,11 +939,12 @@ function appendBotStatic(text, ts, idx) {
   return contentEl;
 }
 
-function appendBotStreaming() {
+// Thinking dots — shown before first token arrives
+function appendBotThinking() {
   const m = document.getElementById('messages');
   const a = getAgent(currentAgentId);
   const d = document.createElement('div'); d.className = 'message assistant';
-  d.innerHTML = `<div class="message-avatar">${a.emoji}</div><div class="message-body"><div class="message-content streaming"></div></div>`;
+  d.innerHTML = `<div class="message-avatar">${a.emoji}</div><div class="message-body"><div class="message-content"><div class="thinking-dots"><span></span><span></span><span></span></div></div></div>`;
   m.appendChild(d);
   return d.querySelector('.message-content');
 }
@@ -817,9 +954,7 @@ function regenerate(msgIdx) {
   if (isStreaming || !currentConvId) return;
   const conv = conversations[currentConvId];
   if (!conv) return;
-  // remove from msgIdx onwards
   conv.messages.splice(msgIdx);
-  // find last user message
   const lastUser = [...conv.messages].reverse().find(m => m.role === 'user');
   if (!lastUser) return;
   saveConvs(); loadConv(currentConvId);
@@ -835,6 +970,7 @@ async function send() {
   if (!text && !imgs.length) return;
   inputEl.value = ''; inputEl.style.height = 'auto';
   document.getElementById('char-count').textContent = '';
+  document.getElementById('token-est').textContent  = '';
   pendingImages = []; renderImagePreviews();
   await sendMessage(text, imgs);
 }
@@ -859,18 +995,11 @@ async function sendMessage(text, imgs) {
   document.getElementById('send-btn').style.display = 'none';
   document.getElementById('stop-btn').style.display = 'flex';
 
-  const contentEl = appendBotStreaming();
+  // Show thinking dots until first token
+  const contentEl = appendBotThinking();
   scrollBottom();
 
   const sysPrompt = getSysPrompt(currentAgentId);
-  const buildContent = (role, storedContent) => {
-    if (role !== 'user' || !imgs?.length || storedContent !== text) return storedContent;
-    return [
-      ...imgs.map(i => ({ type:'image_url', image_url:{ url: i.dataUrl } })),
-      { type:'text', text: storedContent },
-    ];
-  };
-
   const msgs = [
     ...(sysPrompt ? [{ role:'system', content:sysPrompt }] : []),
     ...conv.messages.slice(0, -1).map(m => ({ role:m.role, content:m.content })),
@@ -878,6 +1007,8 @@ async function sendMessage(text, imgs) {
   ];
 
   let full = '';
+  let gotFirstToken = false;
+  let renderPending = false;
   abortCtrl = new AbortController();
 
   try {
@@ -899,7 +1030,26 @@ async function sendMessage(text, imgs) {
         const data = line.slice(6).trim(); if (data === '[DONE]') continue;
         try {
           const delta = JSON.parse(data)?.choices?.[0]?.delta?.content || '';
-          if (delta) { full += delta; contentEl.textContent = full; scrollBottom(); }
+          if (!delta) continue;
+
+          // Replace thinking dots on first token
+          if (!gotFirstToken) {
+            gotFirstToken = true;
+            contentEl.innerHTML = '';
+            contentEl.classList.add('streaming');
+          }
+          full += delta;
+
+          // rAF-batched rendering for smooth live markdown
+          if (!renderPending) {
+            renderPending = true;
+            requestAnimationFrame(() => {
+              contentEl.innerHTML = safeStreamMd(full);
+              wrapCodeBlocks(contentEl);
+              scrollBottom();
+              renderPending = false;
+            });
+          }
         } catch {}
       }
     }
@@ -908,7 +1058,8 @@ async function sendMessage(text, imgs) {
       full = full || '（已停止生成）';
     } else {
       full = `⚠ ${err.message}`;
-      contentEl.innerHTML = `<span style="color:var(--danger)">${full}</span>`;
+      contentEl.innerHTML = `<span style="color:var(--danger)">${escHtml(err.message)}</span>`;
+      toast(err.message, 'err');
     }
   }
 
@@ -947,6 +1098,7 @@ function exportConversation() {
   a.href = URL.createObjectURL(blob);
   a.download = `${conv.title.replace(/[/\\?%*:|"<>]/g,'_')}.md`;
   a.click(); URL.revokeObjectURL(a.href);
+  toast('对话已导出为 Markdown');
 }
 
 // ── Status check ─────────────────────────────────────────────────
@@ -967,6 +1119,12 @@ document.getElementById('sysprompt-toggle').addEventListener('click', () => {
   const open = body.classList.toggle('open'); tgl.classList.toggle('open', open);
 });
 document.getElementById('sysprompt-input').addEventListener('input', e => setSysPrompt(currentAgentId, e.target.value.trim()));
+
+// ── History search ────────────────────────────────────────────────
+document.getElementById('history-search').addEventListener('input', e => {
+  filterQuery = e.target.value;
+  renderHistory();
+});
 
 // ── Lightbox ─────────────────────────────────────────────────────
 document.getElementById('messages').addEventListener('click', e => {
@@ -1027,6 +1185,7 @@ function submitAddAgent() {
   agents.push({ id, name, emoji:document.getElementById('f-emoji').value.trim()||'🤖', model:document.getElementById('f-model').value, desc:document.getElementById('f-desc').value.trim() });
   setSysPrompt(id, document.getElementById('f-sys').value.trim());
   saveAgents(); renderAgents(); openManageAgents();
+  toast(`助手 ${name} 已添加`);
 }
 function submitEditAgent(id) {
   const idx = agents.findIndex(a => a.id === id); if (idx < 0) return;
@@ -1034,6 +1193,7 @@ function submitEditAgent(id) {
   agents[idx] = { ...agents[idx], name:name||agents[idx].name, emoji:document.getElementById('f-emoji').value.trim()||agents[idx].emoji, model:document.getElementById('f-model').value, desc:document.getElementById('f-desc').value.trim() };
   setSysPrompt(id, document.getElementById('f-sys').value.trim());
   saveAgents(); if (id === currentAgentId) selectAgent(id); else renderAgents(); openManageAgents();
+  toast('已保存');
 }
 function deleteAgent(id) {
   if (!confirm('删除此助手及其所有对话历史？')) return;
@@ -1043,27 +1203,51 @@ function deleteAgent(id) {
   saveAgents(); saveConvs();
   if (currentAgentId === id) selectAgent(agents[0].id); else renderAgents();
   openManageAgents();
+  toast('助手已删除', 'warn');
 }
 
 // ── Events ───────────────────────────────────────────────────────
 document.getElementById('send-btn').addEventListener('click', send);
 document.getElementById('stop-btn').addEventListener('click', () => abortCtrl?.abort());
-document.getElementById('new-chat-btn').addEventListener('click', () => { currentConvId = null; showEmpty(); renderHistory(); document.getElementById('input').focus(); });
+document.getElementById('new-chat-btn').addEventListener('click', startNewChat);
 document.getElementById('clear-btn').addEventListener('click', () => {
   if (!currentConvId) return;
   const c = conversations[currentConvId];
   if (!c?.messages.length) return;
   if (!confirm('清空这个对话的所有消息？')) return;
   c.messages = []; c.title = '新对话'; c.updatedAt = Date.now(); saveConvs(); showEmpty(); renderHistory();
+  toast('对话已清空', 'warn');
 });
 document.getElementById('export-btn').addEventListener('click', exportConversation);
 document.getElementById('add-agent-btn').addEventListener('click', openAddAgent);
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
-// Keyboard shortcut: Escape closes modal/lightbox
+function startNewChat() {
+  currentConvId = null; showEmpty(); renderHistory();
+  document.getElementById('input').focus();
+}
+
+// ── Global keyboard shortcuts ─────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); document.getElementById('lightbox').classList.remove('open'); }
+  // Escape — close modal / lightbox
+  if (e.key === 'Escape') {
+    closeModal();
+    document.getElementById('lightbox').classList.remove('open');
+    return;
+  }
+  if (!e.ctrlKey && !e.metaKey) return;
+  switch (e.key.toLowerCase()) {
+    case 'n':  // Ctrl+N — new chat
+      e.preventDefault(); startNewChat(); break;
+    case '/':  // Ctrl+/ — toggle sidebar
+      e.preventDefault(); toggleSidebar(); break;
+    case 'k':  // Ctrl+K — focus history search
+      e.preventDefault();
+      if (sidebarCollapsed()) toggleSidebar();
+      setTimeout(() => document.getElementById('history-search').focus(), 240);
+      break;
+  }
 });
 
 const inputEl = document.getElementById('input');
@@ -1072,10 +1256,19 @@ inputEl.addEventListener('keydown', e => {
   setTimeout(() => { autoResize(e.target); updateCharCount(); }, 0);
 });
 inputEl.addEventListener('input', () => { autoResize(inputEl); updateCharCount(); });
+
 function updateCharCount() {
-  const n = inputEl.value.length; const el = document.getElementById('char-count');
-  el.textContent = n > 0 ? `${n}` : '';
-  el.style.color = n > 3000 ? 'var(--warn)' : 'var(--text2)';
+  const n = inputEl.value.length;
+  const charEl = document.getElementById('char-count');
+  const tokEl  = document.getElementById('token-est');
+  if (n > 0) {
+    charEl.textContent = `${n} 字`;
+    charEl.style.color = n > 3000 ? 'var(--warn)' : 'var(--text2)';
+    tokEl.textContent  = `≈ ${Math.round(n / 3.5)} tokens`;
+  } else {
+    charEl.textContent = '';
+    tokEl.textContent  = '';
+  }
 }
 
 // ── Init ─────────────────────────────────────────────────────────
