@@ -18,7 +18,7 @@
       --danger:  #f85149;
       --success: #3fb950;
       --warn:    #d29922;
-      --radius:  8px;
+      --r:       8px;
       --font:    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
       --mono:    'Cascadia Code', 'Consolas', 'Courier New', monospace;
     }
@@ -29,29 +29,28 @@
     /* ── Sidebar ─────────────────────────────────────────────── */
     .sidebar {
       width: 232px; min-width: 232px;
-      background: var(--bg2);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      overflow: hidden;
+      background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: width 0.22s ease, min-width 0.22s ease, border 0.22s ease;
     }
+    .sidebar.collapsed { width: 0; min-width: 0; border-right: none; }
+    .sidebar-inner { width: 232px; display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
     .sidebar-header {
-      padding: 14px 14px 12px;
+      padding: 13px 14px 11px;
       border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
     .logo { font-size: 17px; font-weight: 800; letter-spacing: 4px; color: var(--accent); }
     .status { display: flex; align-items: center; gap: 5px; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); flex-shrink: 0; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); flex-shrink: 0; transition: background 0.3s; }
     .status-dot.online  { background: var(--success); }
     .status-dot.offline { background: var(--danger); }
     .status-text { font-size: 11px; color: var(--text2); }
 
     .new-chat-btn {
-      margin: 10px 10px 4px;
-      padding: 7px 10px;
-      background: var(--accent); color: #000;
-      border: none; border-radius: var(--radius);
+      margin: 10px 10px 4px; padding: 7px 10px;
+      background: var(--accent); color: #000; border: none; border-radius: var(--r);
       font-size: 12px; font-weight: 600; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 5px;
       flex-shrink: 0; transition: background 0.15s;
@@ -66,8 +65,7 @@
     .agent-list { display: flex; flex-direction: column; gap: 1px; padding: 0 8px; flex-shrink: 0; }
     .agent-item {
       display: flex; align-items: center; gap: 8px;
-      padding: 7px 8px; border-radius: 6px; cursor: pointer;
-      transition: background 0.12s; position: relative;
+      padding: 7px 8px; border-radius: 6px; cursor: pointer; transition: background 0.12s;
     }
     .agent-item:hover { background: var(--bg3); }
     .agent-item.active { background: var(--bg3); }
@@ -77,7 +75,6 @@
     .agent-edit  { font-size: 11px; color: var(--text2); opacity: 0; padding: 2px 5px; cursor: pointer; border-radius: 3px; flex-shrink: 0; border: none; background: transparent; }
     .agent-item:hover .agent-edit { opacity: 1; }
     .agent-edit:hover { background: var(--border); color: var(--text); }
-
     .add-agent-btn {
       display: flex; align-items: center; gap: 6px;
       margin: 2px 8px; padding: 6px 8px; border-radius: 6px;
@@ -87,16 +84,11 @@
     .add-agent-btn:hover { background: var(--bg3); color: var(--text); }
 
     /* system prompt */
-    .sysprompt-wrap {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0; margin: 6px 0;
-    }
+    .sysprompt-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); flex-shrink: 0; margin: 6px 0; }
     .sysprompt-toggle {
       display: flex; align-items: center; justify-content: space-between;
       padding: 7px 14px; cursor: pointer; user-select: none;
-      font-size: 10px; color: var(--text2); font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.8px;
+      font-size: 10px; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
     }
     .sysprompt-toggle:hover { color: var(--text); }
     .sysprompt-toggle svg { transition: transform 0.2s; flex-shrink: 0; }
@@ -129,30 +121,38 @@
     /* ── Main ────────────────────────────────────────────────── */
     main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
     .chat-header {
-      padding: 12px 18px;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; gap: 8px;
       background: var(--bg); flex-shrink: 0;
     }
-    .chat-header-left { display: flex; align-items: center; gap: 8px; }
-    .chat-header-emoji { font-size: 18px; }
-    .chat-header-name  { font-size: 15px; font-weight: 600; }
-    .chat-header-model {
-      font-size: 11px; color: var(--accent);
-      background: rgba(0,188,212,0.1); border: 1px solid rgba(0,188,212,0.25);
-      padding: 2px 8px; border-radius: 3px; font-family: var(--mono);
+    .sidebar-toggle {
+      background: transparent; border: none; cursor: pointer;
+      color: var(--text2); padding: 5px 6px; border-radius: 5px;
+      display: flex; align-items: center; transition: background 0.12s, color 0.12s; flex-shrink: 0;
     }
-    .header-actions { display: flex; align-items: center; gap: 2px; }
+    .sidebar-toggle:hover { background: var(--bg3); color: var(--text); }
+    .chat-header-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+    .chat-header-emoji { font-size: 17px; }
+    .chat-header-name  { font-size: 14px; font-weight: 600; }
+    .model-badge {
+      font-size: 11px; color: var(--accent);
+      background: rgba(0,188,212,0.1); border: 1px solid rgba(0,188,212,0.2);
+      padding: 2px 8px; border-radius: 3px; font-family: var(--mono);
+      cursor: pointer; transition: background 0.12s;
+    }
+    .model-badge:hover { background: rgba(0,188,212,0.2); }
+    .header-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
     .icon-btn {
       background: transparent; border: none; cursor: pointer;
       color: var(--text2); padding: 5px 7px; border-radius: 5px;
-      font-size: 14px; transition: background 0.12s, color 0.12s; display: flex; align-items: center;
+      display: flex; align-items: center; transition: background 0.12s, color 0.12s;
     }
     .icon-btn:hover { background: var(--bg3); color: var(--text); }
 
     /* messages */
-    #messages { flex: 1; overflow-y: auto; padding: 12px 0; display: flex; flex-direction: column; gap: 2px; }
-    .message { display: flex; gap: 10px; padding: 8px 18px; }
+    #messages { flex: 1; overflow-y: auto; padding: 10px 0; display: flex; flex-direction: column; gap: 0; }
+    .message { display: flex; gap: 10px; padding: 8px 18px; position: relative; }
     .message:hover { background: rgba(255,255,255,0.018); }
     .message-avatar {
       width: 30px; height: 30px; border-radius: 6px;
@@ -161,7 +161,11 @@
     }
     .message.user .message-avatar { background: var(--accent2); font-size: 11px; font-weight: 700; }
     .message.assistant .message-avatar { background: var(--bg3); }
-    .message-content { flex: 1; min-width: 0; font-size: 14px; line-height: 1.65; padding-top: 4px; }
+
+    .message-body { flex: 1; min-width: 0; }
+    .msg-images { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .msg-img { max-width: 240px; max-height: 200px; border-radius: 6px; border: 1px solid var(--border); object-fit: contain; cursor: zoom-in; }
+    .message-content { font-size: 14px; line-height: 1.65; }
     .message-content p { margin-bottom: 8px; }
     .message-content p:last-child { margin-bottom: 0; }
     .message-content ul, .message-content ol { margin: 4px 0 8px 18px; }
@@ -174,38 +178,49 @@
     .message-content a { color: var(--accent); text-decoration: none; }
     .message-content a:hover { text-decoration: underline; }
     .message-content hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
-
-    /* inline code */
     .message-content code:not(pre code) {
       background: var(--bg3); border: 1px solid var(--border);
       padding: 1px 5px; border-radius: 4px;
       font-family: var(--mono); font-size: 12.5px; color: #ff7b72;
     }
 
+    /* message hover actions */
+    .msg-actions {
+      position: absolute; right: 14px; top: 7px;
+      display: flex; align-items: center; gap: 3px;
+      opacity: 0; pointer-events: none; transition: opacity 0.12s;
+    }
+    .message:hover .msg-actions { opacity: 1; pointer-events: all; }
+    .msg-ts { font-size: 10px; color: var(--text2); margin-right: 4px; white-space: nowrap; }
+    .msg-act {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 5px; padding: 3px 8px; font-size: 11px;
+      cursor: pointer; color: var(--text2); transition: color 0.1s, background 0.1s; white-space: nowrap;
+    }
+    .msg-act:hover { color: var(--text); background: var(--bg3); }
+    .msg-act.ok { color: var(--success); }
+    .msg-act.danger:hover { color: var(--danger); border-color: var(--danger); }
+
     /* code blocks */
     .code-block-wrap { position: relative; margin: 10px 0; }
     .code-block-header {
       display: flex; align-items: center; justify-content: space-between;
       background: #161b22; border: 1px solid var(--border);
-      border-bottom: none; border-radius: 6px 6px 0 0;
-      padding: 5px 12px;
+      border-bottom: none; border-radius: 6px 6px 0 0; padding: 5px 12px;
     }
     .code-lang { font-size: 11px; color: var(--text2); font-family: var(--mono); }
-    .copy-btn {
+    .code-copy-btn {
       font-size: 11px; background: transparent; border: none;
       color: var(--text2); cursor: pointer; padding: 2px 8px;
       border-radius: 4px; transition: background 0.12s, color 0.12s;
     }
-    .copy-btn:hover { background: var(--border); color: var(--text); }
-    .copy-btn.copied { color: var(--success); }
-    .code-block-wrap pre {
-      margin: 0; border-radius: 0 0 6px 6px;
-      border: 1px solid var(--border); overflow-x: auto;
-    }
+    .code-copy-btn:hover { background: var(--border); color: var(--text); }
+    .code-copy-btn.ok { color: var(--success); }
+    .code-block-wrap pre { margin: 0; border-radius: 0 0 6px 6px; border: 1px solid var(--border); overflow-x: auto; }
     .code-block-wrap pre code { border-radius: 0 0 6px 6px; font-size: 12.5px !important; }
     .hljs { padding: 12px 14px !important; }
 
-    /* streaming cursor */
+    /* streaming */
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .streaming::after { content:'▋'; animation:blink 0.8s infinite; font-size:13px; color:var(--accent); margin-left:1px; }
 
@@ -215,39 +230,99 @@
       align-items: center; justify-content: center; gap: 10px;
       padding: 40px; text-align: center; min-height: 300px;
     }
-    .empty-logo { font-size: 36px; font-weight: 900; letter-spacing: 8px; color: var(--bg3); }
+    .empty-logo { font-size: 34px; font-weight: 900; letter-spacing: 8px; color: var(--bg3); }
     .empty-hint { font-size: 13px; color: var(--text2); }
-    .empty-shortcuts { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+    .empty-shortcuts { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
     .shortcut-row { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 8px; justify-content: center; }
     .kbd { background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; font-family: var(--mono); font-size: 10px; color: var(--text); }
 
+    /* image previews in input */
+    .image-previews {
+      display: none; flex-wrap: wrap; gap: 6px;
+      padding: 8px 14px 0; border-top: 1px solid var(--border);
+    }
+    .image-previews.has-images { display: flex; }
+    .img-thumb {
+      position: relative; width: 60px; height: 60px;
+      border-radius: 6px; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;
+    }
+    .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .img-remove {
+      position: absolute; top: 2px; right: 2px;
+      width: 16px; height: 16px; background: rgba(0,0,0,0.75);
+      border: none; color: #fff; border-radius: 50%; cursor: pointer;
+      font-size: 11px; display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .img-remove:hover { background: var(--danger); }
+
     /* input area */
-    .input-area { border-top: 1px solid var(--border); background: var(--bg); padding: 10px 14px 12px; flex-shrink: 0; }
-    .input-row { display: flex; align-items: flex-end; gap: 8px; }
+    .input-area {
+      border-top: 1px solid var(--border); background: var(--bg);
+      flex-shrink: 0; transition: border-color 0.15s;
+    }
+    .input-area.drag-over { border-top-color: var(--accent); background: rgba(0,188,212,0.04); }
+    .input-row { display: flex; align-items: flex-end; gap: 6px; padding: 10px 14px 0; }
+    .attach-btn {
+      height: 40px; width: 36px; padding: 0;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--r); color: var(--text2); cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; transition: color 0.12s, border-color 0.12s;
+    }
+    .attach-btn:hover { color: var(--text); border-color: var(--text2); }
     #input {
       flex: 1; resize: none; height: 40px; min-height: 40px; max-height: 160px;
       background: var(--bg3); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text); font-size: 13.5px;
+      border-radius: var(--r); color: var(--text); font-size: 13.5px;
       font-family: var(--font); padding: 9px 12px; line-height: 1.5;
       transition: border-color 0.15s;
     }
     #input:focus { outline: none; border-color: var(--accent); }
     #input::placeholder { color: var(--text2); }
     .send-btn {
-      height: 40px; padding: 0 16px;
-      background: var(--accent); color: #000;
-      border: none; border-radius: var(--radius);
-      font-size: 13px; font-weight: 600; cursor: pointer; flex-shrink: 0;
-      transition: background 0.15s, opacity 0.15s;
+      height: 40px; padding: 0 16px; background: var(--accent); color: #000;
+      border: none; border-radius: var(--r); font-size: 13px; font-weight: 600;
+      cursor: pointer; flex-shrink: 0; transition: background 0.15s, opacity 0.15s;
     }
     .send-btn:hover:not(:disabled) { background: var(--accent2); }
     .send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .stop-btn {
+      height: 40px; padding: 0 14px;
+      background: transparent; border: 1px solid var(--danger); border-radius: var(--r);
+      color: var(--danger); font-size: 13px; font-weight: 600;
+      cursor: pointer; flex-shrink: 0; display: none;
+      align-items: center; gap: 5px; transition: background 0.12s;
+    }
+    .stop-btn:hover { background: rgba(248,81,73,0.12); }
     .input-footer {
       display: flex; align-items: center; justify-content: space-between;
-      margin-top: 5px; padding: 0 2px;
+      padding: 5px 14px 10px;
     }
-    .char-count { font-size: 11px; color: var(--text2); min-width: 20px; }
+    .char-count { font-size: 11px; color: var(--text2); }
     .input-hint  { font-size: 11px; color: var(--text2); }
+
+    /* model quick-pick dropdown */
+    .model-picker {
+      position: absolute; top: calc(100% + 4px); left: 0;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 4px; z-index: 50; min-width: 220px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .model-picker-item {
+      padding: 7px 10px; border-radius: 5px; cursor: pointer;
+      font-size: 12px; font-family: var(--mono); color: var(--text2); transition: background 0.1s;
+    }
+    .model-picker-item:hover { background: var(--bg3); color: var(--text); }
+    .model-picker-item.active { color: var(--accent); }
+    .model-picker-wrap { position: relative; display: inline-block; }
+
+    /* image lightbox */
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center; z-index: 200; cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
 
     /* ── Modal ───────────────────────────────────────────────── */
     .modal-overlay {
@@ -269,21 +344,16 @@
     .modal-close:hover { color: var(--text); }
     .modal-body { padding: 14px 16px; overflow-y: auto; flex: 1; }
     .modal-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
-
-    /* form */
     .form-row { margin-bottom: 12px; }
     .form-row label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 5px; font-weight: 500; }
     .form-row input, .form-row select, .form-row textarea {
       width: 100%; background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 6px; color: var(--text); font-size: 13px;
-      padding: 7px 10px; font-family: var(--font);
+      border-radius: 6px; color: var(--text); font-size: 13px; padding: 7px 10px; font-family: var(--font);
     }
     .form-row textarea { resize: vertical; height: 80px; font-size: 12px; font-family: var(--mono); line-height: 1.5; }
     .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: var(--accent); }
     .form-row select option { background: var(--bg3); }
     .form-two { display: grid; grid-template-columns: 64px 1fr; gap: 10px; }
-
-    /* agent cards */
     .agent-card {
       display: flex; align-items: center; gap: 10px;
       padding: 10px; border: 1px solid var(--border);
@@ -296,8 +366,6 @@
     .agent-card-model { font-size: 11px; color: var(--text2); font-family: var(--mono); }
     .agent-card-desc  { font-size: 11px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .agent-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
-
-    /* buttons */
     .btn { padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: opacity 0.15s; }
     .btn:hover { opacity: 0.85; }
     .btn-primary   { background: var(--accent);   color: #000; }
@@ -315,7 +383,8 @@
 <body>
 
 <!-- ── Sidebar ──────────────────────────────────────────────────── -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
+ <div class="sidebar-inner">
   <div class="sidebar-header">
     <span class="logo">FLOCK</span>
     <div class="status">
@@ -323,70 +392,79 @@
       <span class="status-text" id="status-text">检测中...</span>
     </div>
   </div>
-
   <button class="new-chat-btn" id="new-chat-btn">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     新对话
   </button>
-
   <div class="section-label">助手</div>
   <div class="agent-list" id="agent-list"></div>
   <button class="add-agent-btn" id="add-agent-btn">
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     添加助手
   </button>
-
   <div class="sysprompt-wrap">
     <div class="sysprompt-toggle" id="sysprompt-toggle">
       <span>系统提示词</span>
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div class="sysprompt-body" id="sysprompt-body">
-      <textarea id="sysprompt-input" placeholder="对 AI 的角色和规则描述...（留空为默认行为）"></textarea>
+      <textarea id="sysprompt-input" placeholder="角色设定和规则...（留空为默认行为）"></textarea>
     </div>
   </div>
-
   <div class="section-label">历史</div>
   <div class="history-wrap">
     <div class="history-list" id="history-list"></div>
   </div>
+ </div>
 </div>
 
 <!-- ── Main ─────────────────────────────────────────────────────── -->
 <main>
   <div class="chat-header">
-    <div class="chat-header-left">
+    <button class="sidebar-toggle" id="sidebar-toggle" title="折叠侧栏">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="chat-header-info">
       <span class="chat-header-emoji" id="header-emoji">🤖</span>
       <span class="chat-header-name"  id="header-name">Main</span>
-      <span class="chat-header-model" id="header-model">claude-sonnet-4-6</span>
+      <div class="model-picker-wrap" id="model-picker-wrap">
+        <span class="model-badge" id="model-badge">claude-sonnet-4-6</span>
+        <div class="model-picker" id="model-picker" style="display:none"></div>
+      </div>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="clear-btn" title="清空当前对话">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="3 6 5 6 21 6"/>
-          <path d="M19 6l-1 14H6L5 6"/>
-          <path d="M10 11v6M14 11v6"/>
-          <path d="M9 6V4h6v2"/>
-        </svg>
+      <button class="icon-btn" id="export-btn" title="导出对话 (Markdown)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="icon-btn" id="clear-btn" title="清空对话">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
       </button>
     </div>
   </div>
 
   <div id="messages"></div>
 
-  <div class="input-area">
+  <div class="input-area" id="input-area">
+    <div class="image-previews" id="image-previews"></div>
     <div class="input-row">
-      <textarea id="input" placeholder="输入消息...（Enter 发送，Shift+Enter 换行）"></textarea>
+      <button class="attach-btn" id="attach-btn" title="上传图片 (或直接粘贴)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+      </button>
+      <textarea id="input" placeholder="输入消息...（Enter 发送，Shift+Enter 换行，Ctrl+V 粘贴图片）"></textarea>
       <button class="send-btn" id="send-btn">发送</button>
+      <button class="stop-btn" id="stop-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+        停止
+      </button>
     </div>
     <div class="input-footer">
       <span class="char-count" id="char-count"></span>
-      <span class="input-hint">Enter 发送 · Shift+Enter 换行</span>
+      <span class="input-hint">Enter 发送 · Shift+Enter 换行 · Ctrl+V 粘贴图片</span>
     </div>
   </div>
 </main>
 
-<!-- ── Agent modal ──────────────────────────────────────────────── -->
+<!-- ── Modal ─────────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <div class="modal-header">
@@ -398,7 +476,13 @@
   </div>
 </div>
 
-<!-- CDN scripts -->
+<!-- ── Lightbox ──────────────────────────────────────────────────── -->
+<div class="lightbox" id="lightbox"><img id="lightbox-img" src="" alt=""></div>
+
+<!-- ── Hidden file input ─────────────────────────────────────────── -->
+<input type="file" id="file-input" accept="image/*" multiple style="display:none">
+
+<!-- CDN -->
 <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
@@ -423,7 +507,6 @@ const MODELS = [
   'claude-opus-4-6',
   'claude-haiku-4-5-20251001',
 ];
-
 const DEFAULT_AGENTS = [
   { id:'main', name:'Main', emoji:'🤖', model:'claude-sonnet-4-6', desc:'通用助手' },
   { id:'pm',   name:'PM',   emoji:'📋', model:'claude-opus-4-6',   desc:'产品经理' },
@@ -437,6 +520,8 @@ let currentAgentId = localStorage.getItem('flock_agent') || 'main';
 let conversations  = JSON.parse(localStorage.getItem('flock_convs') || '{}');
 let currentConvId  = null;
 let isStreaming    = false;
+let abortCtrl     = null;
+let pendingImages  = [];   // { id, dataUrl, mimeType }
 
 // ── Helpers ──────────────────────────────────────────────────────
 const getAgent     = id => agents.find(a => a.id === id) || agents[0];
@@ -449,77 +534,147 @@ const getSessionId = id => {
   const k = `flock_sid_${id}`;
   return localStorage.getItem(k) || (() => { const v = crypto.randomUUID(); localStorage.setItem(k, v); return v; })();
 };
+const scrollBottom  = () => { const m = document.getElementById('messages'); m.scrollTop = m.scrollHeight; };
+const escHtml       = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+const formatTime    = ts => ts ? new Date(ts).toLocaleTimeString('zh', {hour:'2-digit', minute:'2-digit'}) : '';
+const sidebarCollapsed = () => localStorage.getItem('flock_sidebar') === '0';
 
-const scrollBottom = () => { const m = document.getElementById('messages'); m.scrollTop = m.scrollHeight; };
-
-// ── Code block enhancement ───────────────────────────────────────
+// ── Markdown + syntax highlight ──────────────────────────────────
 function wrapCodeBlocks(container) {
   container.querySelectorAll('pre').forEach(pre => {
     if (pre.parentElement?.classList.contains('code-block-wrap')) return;
     const code = pre.querySelector('code');
     if (!code) return;
-
-    // apply highlight.js
-    if (typeof hljs !== 'undefined' && !code.dataset.highlighted) {
-      hljs.highlightElement(code);
-    }
-
+    if (typeof hljs !== 'undefined' && !code.dataset.highlighted) hljs.highlightElement(code);
     const lang = (code.className.match(/language-(\w+)/) || [])[1] || 'code';
     const wrap = document.createElement('div');
     wrap.className = 'code-block-wrap';
-
-    const header = document.createElement('div');
-    header.className = 'code-block-header';
-    header.innerHTML = `<span class="code-lang">${lang}</span><button class="copy-btn">复制</button>`;
-
-    header.querySelector('.copy-btn').addEventListener('click', e => {
+    const hdr = document.createElement('div');
+    hdr.className = 'code-block-header';
+    hdr.innerHTML = `<span class="code-lang">${lang}</span><button class="code-copy-btn">复制</button>`;
+    hdr.querySelector('.code-copy-btn').addEventListener('click', e => {
       const btn = e.currentTarget;
       navigator.clipboard.writeText(code.textContent || '').then(() => {
-        btn.textContent = '✓ 已复制';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
-      }).catch(() => {
-        btn.textContent = '失败';
-        setTimeout(() => { btn.textContent = '复制'; }, 1500);
-      });
+        btn.textContent = '✓ 已复制'; btn.classList.add('ok');
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('ok'); }, 2000);
+      }).catch(() => { btn.textContent = '失败'; setTimeout(() => { btn.textContent = '复制'; }, 1500); });
     });
-
     pre.parentNode.insertBefore(wrap, pre);
-    wrap.appendChild(header);
-    wrap.appendChild(pre);
+    wrap.appendChild(hdr); wrap.appendChild(pre);
   });
 }
 
-function renderMd(contentEl, text) {
-  if (typeof marked !== 'undefined') {
-    contentEl.innerHTML = marked.parse(text, { breaks: true, gfm: true });
-  } else {
-    contentEl.innerHTML = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-  }
-  wrapCodeBlocks(contentEl);
+function renderMd(el, text) {
+  el.innerHTML = typeof marked !== 'undefined'
+    ? marked.parse(text, { breaks: true, gfm: true })
+    : escHtml(text);
+  wrapCodeBlocks(el);
 }
 
 // ── Conversation helpers ─────────────────────────────────────────
 function newConv(agentId) {
   const id = `c${Date.now()}`;
   conversations[id] = { id, agentId, title:'新对话', messages:[], createdAt:Date.now(), updatedAt:Date.now() };
-  saveConvs();
-  return id;
+  saveConvs(); return id;
+}
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; }
+
+// ── Sidebar collapse ─────────────────────────────────────────────
+function initSidebar() {
+  if (sidebarCollapsed()) document.getElementById('sidebar').classList.add('collapsed');
+}
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  const sb  = document.getElementById('sidebar');
+  const was = sb.classList.toggle('collapsed');
+  localStorage.setItem('flock_sidebar', was ? '0' : '1');
+});
+
+// ── Model quick-pick ─────────────────────────────────────────────
+const pickerWrap  = document.getElementById('model-picker-wrap');
+const pickerEl    = document.getElementById('model-picker');
+
+function renderModelPicker() {
+  const a = getAgent(currentAgentId);
+  pickerEl.innerHTML = MODELS.map(m =>
+    `<div class="model-picker-item ${m === a.model ? 'active' : ''}" data-model="${m}">${m}</div>`
+  ).join('');
+}
+document.getElementById('model-badge').addEventListener('click', e => {
+  e.stopPropagation();
+  renderModelPicker();
+  pickerEl.style.display = pickerEl.style.display === 'none' ? 'block' : 'none';
+});
+pickerEl.addEventListener('click', e => {
+  const m = e.target.dataset.model;
+  if (!m) return;
+  const idx = agents.findIndex(a => a.id === currentAgentId);
+  if (idx >= 0) { agents[idx].model = m; saveAgents(); }
+  document.getElementById('model-badge').textContent = m;
+  pickerEl.style.display = 'none';
+  renderAgents();
+});
+document.addEventListener('click', e => { if (!pickerWrap.contains(e.target)) pickerEl.style.display = 'none'; });
+
+// ── Image handling ────────────────────────────────────────────────
+function addImageFile(file) {
+  if (!file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    pendingImages.push({ id:`img${Date.now()}`, dataUrl: ev.target.result, mimeType: file.type });
+    renderImagePreviews();
+  };
+  reader.readAsDataURL(file);
 }
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+function renderImagePreviews() {
+  const wrap = document.getElementById('image-previews');
+  if (!pendingImages.length) { wrap.classList.remove('has-images'); wrap.innerHTML = ''; return; }
+  wrap.classList.add('has-images');
+  wrap.innerHTML = pendingImages.map(img => `
+    <div class="img-thumb">
+      <img src="${img.dataUrl}" alt="">
+      <button class="img-remove" data-id="${img.id}">×</button>
+    </div>`).join('');
+  wrap.querySelectorAll('.img-remove').forEach(btn =>
+    btn.addEventListener('click', () => {
+      pendingImages = pendingImages.filter(i => i.id !== btn.dataset.id);
+      renderImagePreviews();
+    }));
 }
 
-// ── Render sidebar ───────────────────────────────────────────────
+// paste image
+document.addEventListener('paste', e => {
+  const imgs = [...e.clipboardData.items].filter(i => i.type.startsWith('image/'));
+  if (!imgs.length) return;
+  e.preventDefault();
+  imgs.forEach(i => addImageFile(i.getAsFile()));
+  document.getElementById('input').focus();
+});
+
+// drag & drop
+const inputArea = document.getElementById('input-area');
+inputArea.addEventListener('dragover',  e => { e.preventDefault(); inputArea.classList.add('drag-over'); });
+inputArea.addEventListener('dragleave', ()  => inputArea.classList.remove('drag-over'));
+inputArea.addEventListener('drop', e => {
+  e.preventDefault(); inputArea.classList.remove('drag-over');
+  [...e.dataTransfer.files].filter(f => f.type.startsWith('image/')).forEach(addImageFile);
+});
+
+// file picker
+document.getElementById('attach-btn').addEventListener('click', () => document.getElementById('file-input').click());
+document.getElementById('file-input').addEventListener('change', e => {
+  [...e.target.files].forEach(addImageFile);
+  e.target.value = '';
+});
+
+// ── Render sidebar ────────────────────────────────────────────────
 function renderAgents() {
   document.getElementById('agent-list').innerHTML = agents.map(a => `
     <div class="agent-item ${a.id === currentAgentId ? 'active' : ''}" data-id="${a.id}">
       <span class="agent-emoji">${a.emoji}</span>
       <span class="agent-name">${a.name}</span>
       <span class="agent-tag">${a.model.replace('claude-','').replace(/-\d.*$/,'')}</span>
-      <button class="agent-edit" data-edit="${a.id}" title="编辑助手">✎</button>
+      <button class="agent-edit" data-edit="${a.id}" title="编辑">✎</button>
     </div>`).join('');
   document.querySelectorAll('.agent-item').forEach(el =>
     el.addEventListener('click', e => {
@@ -532,14 +687,11 @@ function renderAgents() {
 function renderHistory() {
   const convs = getConvs(currentAgentId);
   const list  = document.getElementById('history-list');
-  if (!convs.length) {
-    list.innerHTML = '<div style="padding:5px 14px;font-size:11px;color:var(--text2)">暂无历史</div>';
-    return;
-  }
+  if (!convs.length) { list.innerHTML = '<div style="padding:5px 14px;font-size:11px;color:var(--text2)">暂无历史</div>'; return; }
   list.innerHTML = convs.map(c => `
     <div class="history-item ${c.id === currentConvId ? 'active' : ''}" data-id="${c.id}">
       <span class="history-title">${c.title}</span>
-      <span class="history-del" data-del="${c.id}" title="删除">×</span>
+      <span class="history-del" data-del="${c.id}">×</span>
     </div>`).join('');
   list.querySelectorAll('.history-item').forEach(el =>
     el.addEventListener('click', e => {
@@ -550,15 +702,13 @@ function renderHistory() {
 
 // ── Agent selection ──────────────────────────────────────────────
 function selectAgent(id) {
-  currentAgentId = id;
-  localStorage.setItem('flock_agent', id);
+  currentAgentId = id; localStorage.setItem('flock_agent', id);
   const a = getAgent(id);
   document.getElementById('header-emoji').textContent = a.emoji;
   document.getElementById('header-name').textContent  = a.name;
-  document.getElementById('header-model').textContent = a.model;
+  document.getElementById('model-badge').textContent  = a.model;
   document.getElementById('sysprompt-input').value    = getSysPrompt(id);
-  renderAgents();
-  renderHistory();
+  renderAgents(); renderHistory();
   const convs = getConvs(id);
   convs.length ? loadConv(convs[0].id) : showEmpty();
 }
@@ -572,130 +722,181 @@ function showEmpty() {
       <div class="empty-hint">和 ${a.emoji} ${a.name} 开始对话</div>
       <div class="empty-shortcuts">
         <div class="shortcut-row"><span class="kbd">Enter</span><span>发送消息</span></div>
-        <div class="shortcut-row"><span class="kbd">Shift + Enter</span><span>换行</span></div>
+        <div class="shortcut-row"><span class="kbd">Shift+Enter</span><span>换行</span></div>
+        <div class="shortcut-row"><span class="kbd">Ctrl+V</span><span>粘贴图片</span></div>
       </div>
     </div>`;
 }
 
 // ── Conversation management ──────────────────────────────────────
 function loadConv(id) {
-  currentConvId = id;
-  renderHistory();
-  const conv = conversations[id];
-  if (!conv) return;
-  const m = document.getElementById('messages');
-  m.innerHTML = '';
-  conv.messages.forEach(msg => {
-    if (msg.role === 'user') appendUser(msg.content);
-    else appendBotStatic(msg.content);
+  currentConvId = id; renderHistory();
+  const conv = conversations[id]; if (!conv) return;
+  const m = document.getElementById('messages'); m.innerHTML = '';
+  conv.messages.forEach((msg, idx) => {
+    if (msg.role === 'user') appendUser(msg.content, null, msg.ts, idx);
+    else appendBotStatic(msg.content, msg.ts, idx);
   });
   scrollBottom();
 }
 
 function delConv(id) {
-  delete conversations[id];
-  saveConvs();
+  delete conversations[id]; saveConvs();
   if (currentConvId === id) showEmpty();
   renderHistory();
 }
 
 // ── Message rendering ────────────────────────────────────────────
-function appendUser(text) {
+function makeMsgActions(role, text, idx, ts) {
+  const div = document.createElement('div');
+  div.className = 'msg-actions';
+  if (ts) { const s = document.createElement('span'); s.className = 'msg-ts'; s.textContent = formatTime(ts); div.appendChild(s); }
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'msg-act'; copyBtn.textContent = '复制';
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.textContent = '✓'; copyBtn.classList.add('ok');
+      setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('ok'); }, 2000);
+    });
+  });
+  div.appendChild(copyBtn);
+  if (role === 'assistant') {
+    const regen = document.createElement('button');
+    regen.className = 'msg-act'; regen.textContent = '重新生成';
+    regen.dataset.regen = idx;
+    regen.addEventListener('click', () => regenerate(parseInt(regen.dataset.regen)));
+    div.appendChild(regen);
+  }
+  return div;
+}
+
+function appendUser(text, imgDataUrls, ts, idx) {
   const m = document.getElementById('messages');
-  const d = document.createElement('div');
-  d.className = 'message user';
-  const esc = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-  d.innerHTML = `<div class="message-avatar">你</div><div class="message-content">${esc}</div>`;
+  const d = document.createElement('div'); d.className = 'message user';
+  const av = document.createElement('div'); av.className = 'message-avatar'; av.textContent = '你';
+  const body = document.createElement('div'); body.className = 'message-body';
+  if (imgDataUrls?.length) {
+    const imgRow = document.createElement('div'); imgRow.className = 'msg-images';
+    imgDataUrls.forEach(u => { const img = document.createElement('img'); img.className = 'msg-img'; img.src = u; imgRow.appendChild(img); });
+    body.appendChild(imgRow);
+  }
+  const contentEl = document.createElement('div'); contentEl.className = 'message-content';
+  contentEl.innerHTML = escHtml(text);
+  body.appendChild(contentEl);
+  d.appendChild(av); d.appendChild(body);
+  d.appendChild(makeMsgActions('user', text, idx ?? 0, ts));
   m.appendChild(d);
 }
 
-function appendBotStatic(text) {
+function appendBotStatic(text, ts, idx) {
   const m = document.getElementById('messages');
   const a = getAgent(currentAgentId);
-  const d = document.createElement('div');
-  d.className = 'message assistant';
-  d.innerHTML = `<div class="message-avatar">${a.emoji}</div><div class="message-content"></div>`;
+  const d = document.createElement('div'); d.className = 'message assistant';
+  const av = document.createElement('div'); av.className = 'message-avatar'; av.textContent = a.emoji;
+  const body = document.createElement('div'); body.className = 'message-body';
+  const contentEl = document.createElement('div'); contentEl.className = 'message-content';
+  renderMd(contentEl, text);
+  body.appendChild(contentEl);
+  d.appendChild(av); d.appendChild(body);
+  d.appendChild(makeMsgActions('assistant', text, idx ?? 0, ts));
   m.appendChild(d);
-  const el = d.querySelector('.message-content');
-  renderMd(el, text);
-  return el;
+  return contentEl;
 }
 
 function appendBotStreaming() {
   const m = document.getElementById('messages');
   const a = getAgent(currentAgentId);
-  const d = document.createElement('div');
-  d.className = 'message assistant';
-  d.innerHTML = `<div class="message-avatar">${a.emoji}</div><div class="message-content streaming"></div>`;
+  const d = document.createElement('div'); d.className = 'message assistant';
+  d.innerHTML = `<div class="message-avatar">${a.emoji}</div><div class="message-body"><div class="message-content streaming"></div></div>`;
   m.appendChild(d);
   return d.querySelector('.message-content');
+}
+
+// ── Regenerate ───────────────────────────────────────────────────
+function regenerate(msgIdx) {
+  if (isStreaming || !currentConvId) return;
+  const conv = conversations[currentConvId];
+  if (!conv) return;
+  // remove from msgIdx onwards
+  conv.messages.splice(msgIdx);
+  // find last user message
+  const lastUser = [...conv.messages].reverse().find(m => m.role === 'user');
+  if (!lastUser) return;
+  saveConvs(); loadConv(currentConvId);
+  sendMessage(lastUser.content, null);
 }
 
 // ── Send ─────────────────────────────────────────────────────────
 async function send() {
   if (isStreaming) return;
-  const input = document.getElementById('input');
-  const text  = input.value.trim();
-  if (!text) return;
+  const inputEl = document.getElementById('input');
+  const text    = inputEl.value.trim();
+  const imgs    = [...pendingImages];
+  if (!text && !imgs.length) return;
+  inputEl.value = ''; inputEl.style.height = 'auto';
+  document.getElementById('char-count').textContent = '';
+  pendingImages = []; renderImagePreviews();
+  await sendMessage(text, imgs);
+}
 
-  if (!currentConvId) {
-    currentConvId = newConv(currentAgentId);
-    renderHistory();
-  }
-
+async function sendMessage(text, imgs) {
+  if (!currentConvId) { currentConvId = newConv(currentAgentId); renderHistory(); }
   const conv  = conversations[currentConvId];
   const agent = getAgent(currentAgentId);
-
   document.getElementById('messages').querySelector('.empty-state')?.remove();
 
-  conv.messages.push({ role:'user', content:text });
-  conv.updatedAt = Date.now();
+  const ts = Date.now();
+  const msgIdx = conv.messages.length;
+  conv.messages.push({ role:'user', content: text, ts });
+  conv.updatedAt = ts;
   if (conv.messages.length === 1) conv.title = text.slice(0, 28) + (text.length > 28 ? '…' : '');
   saveConvs();
 
-  appendUser(text);
-  input.value = '';
-  input.style.height = 'auto';
-  document.getElementById('char-count').textContent = '';
-  scrollBottom();
-  renderHistory();
+  appendUser(text, imgs?.map(i => i.dataUrl), ts, msgIdx);
+  scrollBottom(); renderHistory();
 
   isStreaming = true;
-  document.getElementById('send-btn').disabled = true;
+  document.getElementById('send-btn').style.display = 'none';
+  document.getElementById('stop-btn').style.display = 'flex';
+
   const contentEl = appendBotStreaming();
   scrollBottom();
 
-  let full = '';
   const sysPrompt = getSysPrompt(currentAgentId);
+  const buildContent = (role, storedContent) => {
+    if (role !== 'user' || !imgs?.length || storedContent !== text) return storedContent;
+    return [
+      ...imgs.map(i => ({ type:'image_url', image_url:{ url: i.dataUrl } })),
+      { type:'text', text: storedContent },
+    ];
+  };
+
   const msgs = [
     ...(sysPrompt ? [{ role:'system', content:sysPrompt }] : []),
-    ...conv.messages.slice(0, -1),
-    { role:'user', content:text },
+    ...conv.messages.slice(0, -1).map(m => ({ role:m.role, content:m.content })),
+    { role:'user', content: imgs?.length ? [...imgs.map(i => ({ type:'image_url', image_url:{ url:i.dataUrl } })), { type:'text', text }] : text },
   ];
+
+  let full = '';
+  abortCtrl = new AbortController();
 
   try {
     const res = await fetch('/v1/chat/completions', {
       method: 'POST',
+      signal: abortCtrl.signal,
       headers: { 'Content-Type':'application/json', 'Authorization':'Bearer max-subscription' },
       body: JSON.stringify({ model:agent.model, stream:true, user:getSessionId(agent.id), messages:msgs }),
     });
-
     if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
 
-    const reader  = res.body.getReader();
-    const decoder = new TextDecoder();
-    let   buffer  = '';
-
+    const reader = res.body.getReader(); const decoder = new TextDecoder(); let buf = '';
     while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream:true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
+      const { done, value } = await reader.read(); if (done) break;
+      buf += decoder.decode(value, { stream:true });
+      const lines = buf.split('\n'); buf = lines.pop();
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (data === '[DONE]') continue;
+        const data = line.slice(6).trim(); if (data === '[DONE]') continue;
         try {
           const delta = JSON.parse(data)?.choices?.[0]?.delta?.content || '';
           if (delta) { full += delta; contentEl.textContent = full; scrollBottom(); }
@@ -703,34 +904,57 @@ async function send() {
       }
     }
   } catch (err) {
-    full = `⚠ ${err.message}`;
-    contentEl.innerHTML = `<span style="color:var(--danger)">${full}</span>`;
+    if (err.name === 'AbortError') {
+      full = full || '（已停止生成）';
+    } else {
+      full = `⚠ ${err.message}`;
+      contentEl.innerHTML = `<span style="color:var(--danger)">${full}</span>`;
+    }
   }
 
   contentEl.classList.remove('streaming');
   if (full && !full.startsWith('⚠')) renderMd(contentEl, full);
 
-  conv.messages.push({ role:'assistant', content:full });
-  conv.updatedAt = Date.now();
-  saveConvs();
-  renderHistory();
-  scrollBottom();
+  const botTs  = Date.now();
+  const botIdx = conv.messages.length;
+  conv.messages.push({ role:'assistant', content:full, ts:botTs });
+  conv.updatedAt = botTs; saveConvs(); renderHistory();
 
-  isStreaming = false;
-  document.getElementById('send-btn').disabled = false;
-  input.focus();
+  // replace streaming msg-actions with real ones
+  const msgEl = contentEl.closest('.message');
+  msgEl?.querySelector('.msg-actions')?.remove();
+  msgEl?.appendChild(makeMsgActions('assistant', full, botIdx, botTs));
+
+  scrollBottom();
+  isStreaming = false; abortCtrl = null;
+  document.getElementById('send-btn').style.display = '';
+  document.getElementById('stop-btn').style.display = 'none';
+  document.getElementById('input').focus();
+}
+
+// ── Export ───────────────────────────────────────────────────────
+function exportConversation() {
+  if (!currentConvId) return;
+  const conv  = conversations[currentConvId];
+  const agent = getAgent(currentAgentId);
+  const lines = [`# ${conv.title}\n\n_导出时间: ${new Date().toLocaleString('zh')}_\n_助手: ${agent.emoji} ${agent.name} | 模型: ${agent.model}_\n`];
+  conv.messages.forEach(m => {
+    const role = m.role === 'user' ? '**你**' : `**${agent.emoji} ${agent.name}**`;
+    lines.push(`\n---\n\n${role}\n\n${m.content}\n`);
+  });
+  const blob = new Blob([lines.join('')], { type:'text/markdown;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${conv.title.replace(/[/\\?%*:|"<>]/g,'_')}.md`;
+  a.click(); URL.revokeObjectURL(a.href);
 }
 
 // ── Status check ─────────────────────────────────────────────────
 async function checkStatus() {
   try {
-    const r = await fetch('/v1/models', {
-      headers: { 'Authorization':'Bearer max-subscription' },
-      signal: AbortSignal.timeout(3000),
-    });
-    const ok = r.ok;
-    document.getElementById('status-dot').className   = `status-dot ${ok ? 'online' : 'offline'}`;
-    document.getElementById('status-text').textContent = ok ? 'MaxProxy 在线' : 'MaxProxy 离线';
+    const r = await fetch('/v1/models', { headers:{ 'Authorization':'Bearer max-subscription' }, signal:AbortSignal.timeout(3000) });
+    document.getElementById('status-dot').className   = `status-dot ${r.ok ? 'online' : 'offline'}`;
+    document.getElementById('status-text').textContent = r.ok ? 'MaxProxy 在线' : 'MaxProxy 离线';
   } catch {
     document.getElementById('status-dot').className   = 'status-dot offline';
     document.getElementById('status-text').textContent = 'MaxProxy 离线';
@@ -739,26 +963,28 @@ async function checkStatus() {
 
 // ── System prompt ────────────────────────────────────────────────
 document.getElementById('sysprompt-toggle').addEventListener('click', () => {
-  const body   = document.getElementById('sysprompt-body');
-  const toggle = document.getElementById('sysprompt-toggle');
-  const open   = body.classList.toggle('open');
-  toggle.classList.toggle('open', open);
+  const body = document.getElementById('sysprompt-body'); const tgl = document.getElementById('sysprompt-toggle');
+  const open = body.classList.toggle('open'); tgl.classList.toggle('open', open);
 });
+document.getElementById('sysprompt-input').addEventListener('input', e => setSysPrompt(currentAgentId, e.target.value.trim()));
 
-document.getElementById('sysprompt-input').addEventListener('input', e => {
-  setSysPrompt(currentAgentId, e.target.value.trim());
+// ── Lightbox ─────────────────────────────────────────────────────
+document.getElementById('messages').addEventListener('click', e => {
+  const img = e.target.closest('.msg-img');
+  if (img) { document.getElementById('lightbox-img').src = img.src; document.getElementById('lightbox').classList.add('open'); }
 });
+document.getElementById('lightbox').addEventListener('click', () => document.getElementById('lightbox').classList.remove('open'));
 
 // ── Modal helpers ─────────────────────────────────────────────────
 function openModal(title, bodyHTML, footerHTML) {
-  document.getElementById('modal-title').textContent  = title;
-  document.getElementById('modal-body').innerHTML    = bodyHTML;
-  document.getElementById('modal-footer').innerHTML  = footerHTML;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML   = bodyHTML;
+  document.getElementById('modal-footer').innerHTML = footerHTML;
   document.getElementById('modal-overlay').classList.add('open');
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
-// ── Manage agents ─────────────────────────────────────────────────
+// ── Agent CRUD ────────────────────────────────────────────────────
 function openManageAgents() {
   const cards = agents.map(a => `
     <div class="agent-card">
@@ -775,16 +1001,15 @@ function openManageAgents() {
     </div>`).join('');
   openModal('管理助手', cards,
     `<button class="btn btn-secondary" onclick="closeModal()">关闭</button>
-     <button class="btn btn-primary" onclick="openAddAgent()">+ 添加助手</button>`);
+     <button class="btn btn-primary"   onclick="openAddAgent()">+ 添加助手</button>`);
 }
 
 function agentFormHTML(a) {
-  const opts = MODELS.map(m =>
-    `<option value="${m}" ${(a?.model || MODELS[0]) === m ? 'selected' : ''}>${m}</option>`).join('');
+  const opts = MODELS.map(m => `<option value="${m}" ${(a?.model || MODELS[0]) === m ? 'selected' : ''}>${m}</option>`).join('');
   return `
     <div class="form-two form-row">
       <div><label>图标</label><input id="f-emoji" value="${a?.emoji||'🤖'}" maxlength="2" style="text-align:center;font-size:18px"></div>
-      <div><label>名称</label><input id="f-name" value="${a?.name||''}" placeholder="助手名称"></div>
+      <div><label>名称</label><input id="f-name"  value="${a?.name||''}" placeholder="助手名称"></div>
     </div>
     <div class="form-row"><label>模型</label><select id="f-model">${opts}</select></div>
     <div class="form-row"><label>描述</label><input id="f-desc" value="${a?.desc||''}" placeholder="一句话描述用途"></div>
@@ -793,46 +1018,28 @@ function agentFormHTML(a) {
       <textarea id="f-sys" placeholder="角色设定和规则...">${a ? getSysPrompt(a.id) : ''}</textarea>
     </div>`;
 }
-
-function openAddAgent() {
-  openModal('添加助手', agentFormHTML(null),
-    `<button class="btn btn-secondary" onclick="openManageAgents()">取消</button>
-     <button class="btn btn-primary" onclick="submitAddAgent()">添加</button>`);
-}
-
-function openEditAgent(id) {
-  const a = getAgent(id);
-  openModal(`编辑：${a.name}`, agentFormHTML(a),
-    `<button class="btn btn-secondary" onclick="openManageAgents()">取消</button>
-     <button class="btn btn-primary" onclick="submitEditAgent('${id}')">保存</button>`);
-}
+function openAddAgent()    { openModal('添加助手', agentFormHTML(null), `<button class="btn btn-secondary" onclick="openManageAgents()">取消</button><button class="btn btn-primary" onclick="submitAddAgent()">添加</button>`); }
+function openEditAgent(id) { openModal(`编辑：${getAgent(id).name}`, agentFormHTML(getAgent(id)), `<button class="btn btn-secondary" onclick="openManageAgents()">取消</button><button class="btn btn-primary" onclick="submitEditAgent('${id}')">保存</button>`); }
 
 function submitAddAgent() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { document.getElementById('f-name').focus(); return; }
+  const name = document.getElementById('f-name').value.trim(); if (!name) return;
   const id = `a${Date.now()}`;
-  agents.push({ id, name, emoji: document.getElementById('f-emoji').value.trim() || '🤖', model: document.getElementById('f-model').value, desc: document.getElementById('f-desc').value.trim() });
+  agents.push({ id, name, emoji:document.getElementById('f-emoji').value.trim()||'🤖', model:document.getElementById('f-model').value, desc:document.getElementById('f-desc').value.trim() });
   setSysPrompt(id, document.getElementById('f-sys').value.trim());
   saveAgents(); renderAgents(); openManageAgents();
 }
-
 function submitEditAgent(id) {
-  const idx = agents.findIndex(a => a.id === id);
-  if (idx < 0) return;
+  const idx = agents.findIndex(a => a.id === id); if (idx < 0) return;
   const name = document.getElementById('f-name').value.trim();
-  agents[idx] = { ...agents[idx], name: name || agents[idx].name, emoji: document.getElementById('f-emoji').value.trim() || agents[idx].emoji, model: document.getElementById('f-model').value, desc: document.getElementById('f-desc').value.trim() };
+  agents[idx] = { ...agents[idx], name:name||agents[idx].name, emoji:document.getElementById('f-emoji').value.trim()||agents[idx].emoji, model:document.getElementById('f-model').value, desc:document.getElementById('f-desc').value.trim() };
   setSysPrompt(id, document.getElementById('f-sys').value.trim());
-  saveAgents();
-  if (id === currentAgentId) selectAgent(id); else renderAgents();
-  openManageAgents();
+  saveAgents(); if (id === currentAgentId) selectAgent(id); else renderAgents(); openManageAgents();
 }
-
 function deleteAgent(id) {
   if (!confirm('删除此助手及其所有对话历史？')) return;
   agents = agents.filter(a => a.id !== id);
   Object.keys(conversations).forEach(k => { if (conversations[k].agentId === id) delete conversations[k]; });
-  localStorage.removeItem(`flock_sid_${id}`);
-  localStorage.removeItem(`flock_sysprompt_${id}`);
+  ['flock_sid_', 'flock_sysprompt_'].forEach(p => localStorage.removeItem(p + id));
   saveAgents(); saveConvs();
   if (currentAgentId === id) selectAgent(agents[0].id); else renderAgents();
   openManageAgents();
@@ -840,18 +1047,24 @@ function deleteAgent(id) {
 
 // ── Events ───────────────────────────────────────────────────────
 document.getElementById('send-btn').addEventListener('click', send);
+document.getElementById('stop-btn').addEventListener('click', () => abortCtrl?.abort());
 document.getElementById('new-chat-btn').addEventListener('click', () => { currentConvId = null; showEmpty(); renderHistory(); document.getElementById('input').focus(); });
 document.getElementById('clear-btn').addEventListener('click', () => {
   if (!currentConvId) return;
   const c = conversations[currentConvId];
   if (!c?.messages.length) return;
   if (!confirm('清空这个对话的所有消息？')) return;
-  c.messages = []; c.title = '新对话'; c.updatedAt = Date.now();
-  saveConvs(); showEmpty(); renderHistory();
+  c.messages = []; c.title = '新对话'; c.updatedAt = Date.now(); saveConvs(); showEmpty(); renderHistory();
 });
+document.getElementById('export-btn').addEventListener('click', exportConversation);
 document.getElementById('add-agent-btn').addEventListener('click', openAddAgent);
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+// Keyboard shortcut: Escape closes modal/lightbox
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); document.getElementById('lightbox').classList.remove('open'); }
+});
 
 const inputEl = document.getElementById('input');
 inputEl.addEventListener('keydown', e => {
@@ -860,14 +1073,14 @@ inputEl.addEventListener('keydown', e => {
 });
 inputEl.addEventListener('input', () => { autoResize(inputEl); updateCharCount(); });
 function updateCharCount() {
-  const n  = inputEl.value.length;
-  const el = document.getElementById('char-count');
+  const n = inputEl.value.length; const el = document.getElementById('char-count');
   el.textContent = n > 0 ? `${n}` : '';
   el.style.color = n > 3000 ? 'var(--warn)' : 'var(--text2)';
 }
 
 // ── Init ─────────────────────────────────────────────────────────
 if (!agents.find(a => a.id === currentAgentId)) currentAgentId = agents[0].id;
+initSidebar();
 renderAgents();
 selectAgent(currentAgentId);
 checkStatus();
